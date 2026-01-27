@@ -1,20 +1,49 @@
 public class Tenant {
     String name;
+    int age;
     String phoneNumber;
     String email;
-    int roomNumber;
-    boolean hasActiveContract;
-    boolean hasPets;
-    int floor;
+    Room room;
+    String TenantId;
     
-    public Tenant(String name, String phoneNumber, String email, int roomNumber, boolean hasActiveContract, boolean hasPets, int floor) {
+    public Tenant(String name, String phoneNumber, String email, Room room, String TenantId, int age) {
         this.name = name;
+        this.age = age;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.roomNumber = roomNumber;
-        this.hasActiveContract = hasActiveContract;
-        this.floor = floor;
-        this.hasPets = hasPets;
+        this.room = room;
+        this.TenantId = TenantId;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+    public Room getRoom() {
+        return room;
+    }
+    public String getTenantId() {
+        return TenantId;
+    }
+    public void displayTenantInfo() {
+        System.out.println("--------------Tenant Information----------------");
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        System.out.println("Phone Number: " + phoneNumber);
+        System.out.println("Email: " + email);
+        System.out.println("Room Number: " + room.getRoomNumber());
+        System.out.println("Tenant ID: " + TenantId);
+
+    }
 }
