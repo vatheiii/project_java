@@ -1,6 +1,6 @@
 public class Tenant {
     String name;
-    String age;
+    int age;
     String phoneNumber;
     String email;
     int roomNumber;
@@ -8,7 +8,7 @@ public class Tenant {
     boolean hasPets;
     int floor;
     
-    public Tenant(String name, String phoneNumber, String email, int roomNumber, boolean hasActiveContract, boolean hasPets, int floor, String age) {
+    public Tenant(String name, String phoneNumber, String email, int roomNumber, boolean hasActiveContract, boolean hasPets, int floor, int age) {
         this.name = name;
         this.age = age;
         this.phoneNumber = phoneNumber;
@@ -23,7 +23,7 @@ public class Tenant {
         return name;
     }
 
-    public String getAge() {
+    public int getAge() {
         return age;
     }
 
