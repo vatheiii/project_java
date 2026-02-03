@@ -1,11 +1,13 @@
-public class Room {
+class Room {
     int roomNumber;
     String roomType;
     boolean isAvailable;
     double rentPrice;
     int floor;
+    Contract waterRate;
+    Contract electricityRate;
 
-    public Room(int roomNumber, String roomType, boolean isAvailable, double rentPrice, int floor) {
+    Room(int roomNumber, String roomType, boolean isAvailable, double rentPrice, int floor) {
         this.roomNumber = roomNumber;
         this.roomType = roomType;
         this.isAvailable = isAvailable;
@@ -13,30 +15,13 @@ public class Room {
         this.floor = floor;
     }
 
-    public int getRoomNumber() {
-        return roomNumber;
-    }
-
-    public String getRoomType() {
-        return roomType;
-    }
-
-    public boolean getIsAvailable() {
-        return isAvailable;
-    }
-    public double getRentPrice() {
-        return rentPrice;
-    }
-    public int getFloor() {
-        return floor;
-    }
-    public void displayRoomInfo() {
-        System.out.println("--------------Room Information----------------");
+    void displayRoomInfo() {
+        System.out.println("-------------Room Information-------------");
         System.out.println("Room Number: " + roomNumber);
         System.out.println("Room Type: " + roomType);
-        System.out.println("Available: " + isAvailable);
-        System.out.println("Floor: " + floor);
+        System.out.println("Availability: " + (isAvailable ? "Available" : "Occupied"));
         System.out.println("Rent Price: $" + rentPrice);
-
+        System.out.println("Floor: " + floor);
     }
+    
 }

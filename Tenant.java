@@ -1,4 +1,4 @@
-public class Tenant {
+class Tenant {
     String name;
     int age;
     String phoneNumber;
@@ -6,7 +6,7 @@ public class Tenant {
     Room room;
     String TenantId;
     
-    public Tenant(String name, String phoneNumber, String email,
+    Tenant(String name, String phoneNumber, String email,
         Room room, boolean hasActiveContract, String TenantId, int age) {
         this.name = name;
         this.age = age;
@@ -17,18 +17,17 @@ public class Tenant {
 
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
-    public void displayTenantInfo() {
+
+    void displayTenantInfo() {
         System.out.println("-------------Tenant Information-------------");
         System.out.println("Name: " + name);
         System.out.println("Age: " + age);
         System.out.println("Phone Number: " + phoneNumber);
         System.out.println("Email: " + email);
-        System.out.println("Room Number: " + room.getRoomNumber());
+        System.out.println("Room Number: " + room.roomNumber);
         System.out.println("Tenant ID: " + TenantId);
     }
-
 }
-  

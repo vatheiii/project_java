@@ -4,26 +4,62 @@ import java.util.ArrayList;//to store data
 public class Main {
 
     public static void main(String[] args) {
-
-    ArrayList<Room> rooms = new ArrayList<>();
-    ArrayList<Tenant> tenants = new ArrayList<>();
-    ArrayList<Contract> contracts = new ArrayList<>();
+        ArrayList<Room> rooms = new ArrayList<>();  
+        ArrayList<Tenant> tenants = new ArrayList<>();
+        ArrayList<Contract> contracts = new ArrayList<>();
 
         // Sample Data
         Room room1 = new Room(101, "Single", true, 500.0, 1);
         Room room2 = new Room(102, "Double", false, 800.0, 1);
-        rooms.add(room1);   
+        rooms.add(room1);
         rooms.add(room2);
-        Tenant tenant1 = new Tenant("Alice", "123-456-7890", "alice@example.com", room1, true, "T001", 25); 
-        Tenant tenant2 = new Tenant("Meow", "987-654-3210", "bob@example.com", room2, true, "T002", 30); 
+
+        Tenant tenant1 = new Tenant("Alice", "012345678", "alice@gmail.com", room2, true, "ID12345", 18);
         tenants.add(tenant1);
-        tenants.add(tenant2);
-        Contract contract1 = new Contract(room1, tenant1, "2023-01-01", tenant1, "2023-12-31", 30.0, 50.0);
-        Contract contract2 = new Contract(room2, tenant2, "2023-02-01", tenant2, "2024-01-31", 40.0, 60.0);
-        contracts.add(contract1);   
-        contracts.add(contract2);
+
+        Contract contract1 = new Contract( room2 ,tenant1, "2023-01-01", 0.5, 0.5);
+        contracts.add(contract1);
+
+
+        System.out.println("F1: Primitive Copy Proof");
+        double originalRent = 500.0;
+        double copiedRent = originalRent;
+        copiedRent += 100.0;
+        System.out.println("Original Rent Price: " + originalRent); 
+        System.out.println("Copied Rent Price after modification: " + copiedRent);
+
+
+        System.out.println("\nF2: Reference Copy Proof");
+        Room roomRef1 = room1;
+        Room roomRef2 = roomRef1;
+        roomRef2.rentPrice = 600.00;
+        System.out.println("Room 1 Rent Price: " + roomRef1.rentPrice);
+        System.out.println("Room 2 Rent Price after modification: " + roomRef2.rentPrice);
+
+
+        System.out.println("\nF3: Array store Reference Proof");
+        Room[] roomArray = new Room[2];
+        roomArray[0] = room1;
+        roomArray[1] = room2;
+        System.out.println("Room 1 Rent Price after modification: " + room1.rentPrice);
+        System.out.println("Room 2 Rent Price (unchanged): " + room2.rentPrice);
+
+        
+        System.out.println("\nF4:  Snapshot behavior Proof"); 
+        // Save a primitive snapshot of the rent at contract creation (primitive copy)
+        double contractSnapshot = contract1.rentAtContractTime;
+        // Modify the room's current rent 
+        room2.rentPrice = 900.0;
+        System.out.println("Room Rent Price at Contract Time (saved in contract): " + contractSnapshot); 
+        System.out.println("Current Room Rent Price after modification: " + room2.rentPrice);
+        System.out.println("Contract Rent Price during creation: " + contract1.rentAtContractTime);
+
+        System.out.println("Current Room price: " + room1.rentPrice);
+        System.out.println("Current Room price: " + room2.rentPrice);
 
         Choice.displayMenu(rooms, tenants, contracts);
 
-}
+        
+    }
+    
 }
