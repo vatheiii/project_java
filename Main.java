@@ -14,6 +14,7 @@ public class Main {
         rooms.add(room1);
         rooms.add(room2);
 
+
         Tenant tenant1 = new Tenant("Alice", "012345678", "alice@gmail.com", room2, true, "ID12345", 18);
         tenants.add(tenant1);
 
@@ -45,7 +46,7 @@ public class Main {
         System.out.println("Room 2 Rent Price (unchanged): " + room2.rentPrice);
 
         
-        System.out.println("\nF4:  Snapshot behavior Proof"); 
+        System.out.println("\nF4: Snapshot behavior Proof"); 
         // Save a primitive snapshot of the rent at contract creation (primitive copy)
         double contractSnapshot = contract1.rentAtContractTime;
         // Modify the room's current rent 
@@ -57,9 +58,14 @@ public class Main {
         System.out.println("Current Room price: " + room1.rentPrice);
         System.out.println("Current Room price: " + room2.rentPrice);
 
+        // System.out.println("\nFind Contract by Tenant Name");
+        // contract1.findContractByTenant(contracts, "Bob");
+
+
         Choice.displayMenu(rooms, tenants, contracts);
 
-        
     }
-    
 }
+
+    
+

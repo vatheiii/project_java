@@ -1,7 +1,9 @@
+
 class Contract {
     Room room;                  //reference type
     Tenant tenant;              //reference type
 
+    
     // Contract signing details
     String startDate;           //primitive type
     String endDate;             //primitive type
@@ -33,7 +35,13 @@ class Contract {
         System.out.println("Water Rate: $" + waterRate);
         System.out.println("Electricity Rate: $" + electricityRate);
     }
-
+    
+    void findContractByTenant(Contract contract, String tenantName) {
+        if (this.tenant.name.equals(tenantName)) {
+            System.out.println("Contract found for tenant: " + tenantName);
+            displayContractDetails();
+        }
+    }
 
     @Override
     public String toString() {
