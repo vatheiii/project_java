@@ -6,6 +6,7 @@ public class Contract {
     String endDate;
     double WaterBill;
     double ElectricityBill;
+    
     public Contract(Room room, Tenant tenant, String startDate, 
         Tenant name,String endDate,double WaterBill, double ElectricityBill) {
         // Constructor implementation
