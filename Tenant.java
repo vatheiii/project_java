@@ -1,10 +1,10 @@
 public class Tenant {
-    String name;
-    int age;
-    String phoneNumber;
-    String email;
-    Room room;
-    String TenantId;
+    private String name;
+    private int age;
+    private String phoneNumber;
+    private String email;
+    private Room room;
+    private String TenantId;
     
     public Tenant(String name, String phoneNumber, String email,
         Room room, boolean hasActiveContract, String TenantId, int age) {
@@ -20,15 +20,24 @@ public class Tenant {
     public String getName() {
         return name;
     }
-    public void displayTenantInfo() {
-        System.out.println("-------------Tenant Information-------------");
-        System.out.println("Name: " + name);
-        System.out.println("Age: " + age);
-        System.out.println("Phone Number: " + phoneNumber);
-        System.out.println("Email: " + email);
-        System.out.println("Room Number: " + room.getRoomNumber());
-        System.out.println("Tenant ID: " + TenantId);
+    
+    public int getAge() {
+        return age;
     }
-
+    
+    public String getPhoneNum() {
+        return phoneNumber;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public Room getRoom() {
+        return room;
+    }
+    
+    public String getID() {
+        return TenantId;
+    }
 }
-  

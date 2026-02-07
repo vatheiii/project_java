@@ -1,58 +1,48 @@
-
 import java.util.ArrayList;//to store data 
-import java.util.Scanner;// to read input of user
+
 public class Main {
 
     public static void main(String[] args) {
-       Scanner scanner = new Scanner(System.in);
-        ArrayList<Room> rooms = new ArrayList<>();
+        ArrayList<Room> rooms = new ArrayList<>();  
         ArrayList<Tenant> tenants = new ArrayList<>();
         ArrayList<Contract> contracts = new ArrayList<>();
-        // Sample Data
-        Room room1 = new Room(101, "Single", true, 500.0, 1);
-        Room room2 = new Room(102, "Double", false, 800.0, 1);
-        rooms.add(room1);   
-        rooms.add(room2);
-        Tenant tenant1 = new Tenant("Alice", "123-456-7890", "alice@example.com", room1, true, "T001", 25); 
-        Tenant tenant2 = new Tenant("Bob", "987-654-3210", "bob@example.com", room2, true, "T002", 30); 
-        tenants.add(tenant1);
-        tenants.add(tenant2);
-        Contract contract1 = new Contract(room1, tenant1, "2023-01-01", tenant1, "2023-12-31", 30.0, 50.0);
-        Contract contract2 = new Contract(room2, tenant2, "2023-02-01", tenant2, "2024-01-31", 40.0, 60.0);
-        contracts.add(contract1);   
-        contracts.add(contract2);
+        ArrayList<Bill>bills=new ArrayList<>();
 
-        while(true){
-            System.out.println("-------Apartment Management System-------");
-            System.out.println("1.Room Information");
-            System.out.println("2.Tenent Information");
-            System.out.println("3.Contract Information");
-            System.out.println("4.Exit");   
-            System.out.print("Select an option: ");
-            int option = scanner.nextInt();
-            scanner.nextLine();
-            if(option == 1){
-                for(Room room : rooms){
-                    room.displayRoomInfo();
-                    
-                }
+        Room room1 = new Room(101, "Single Bedroom", true, 500, 1);
+        rooms.add(room1);
+        
+        Tenant t1 = new Tenant("Alice","0123456789","alice@gmail.com",room1,true,"T01",18);
+        tenants.add(t1);
 
-            }else if(option == 2){
-                for(Tenant tenant : tenants){
-                    tenant.displayTenantInfo();
-                }
+        Contract C1 = new Contract(room1, t1,"2023-01-01",0.5,0.5);
+        contracts.add(C1);
 
-            
-            }else if(option == 3){
-                for(Contract contract : contracts){
-                    contract.displayContractDetails();
-                }
+        Bill b1 = new Bill(C1,10,50);
+        bills.add(b1);
 
-            }else if (option == 4){
-                System.out.println("Exiting the system.");
-                break;
+        //F1 : Primative Copy
+        double a = 200;
+        double b = a;
+        b+=50;
+        System.out.println("F1"+ a +"and"+ b);
+
+        //F2 : Reference Copy
+        Room r2 = room1;
+        r2.setRentPrice(900);
+        System.out.println("F2: "+ room1.getRentPrice());
+
+        //F3 : Array Reference
+        Room[] arr = new Room[1];
+        arr[0]=room1;
+        arr[0].setRentPrice(1000);
+        System.out.println("F3: " + room1.getRentPrice());
+        
+        //F4 : Snapshot
+        System.out.println("F4 Snapshot Rent: " + C1.getRentAtContractTime());
+        System.out.println("Current Rent: " + room1.getRentPrice());
+
+        Choice.displayMenu(rooms, tenants, contracts, bills);
     }
+}
 
-}
-}
-}
+

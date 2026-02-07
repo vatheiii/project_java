@@ -1,9 +1,11 @@
 public class Room {
-    int roomNumber;
-    String roomType;
-    boolean isAvailable;
-    double rentPrice;
-    int floor;
+    private int roomNumber;
+    private String roomType;
+    private boolean isAvailable;
+    private double rentPrice;
+    private int floor;
+
+    private static int totalRooms =0;
 
     public Room(int roomNumber, String roomType, boolean isAvailable, double rentPrice, int floor) {
         this.roomNumber = roomNumber;
@@ -11,32 +13,38 @@ public class Room {
         this.isAvailable = isAvailable;
         this.rentPrice = rentPrice;
         this.floor = floor;
+        totalRooms++;
     }
 
-    public int getRoomNumber() {
+    public int getRoomNumber(){
         return roomNumber;
     }
-
-    public String getRoomType() {
+    public double getRentPrice(){
+        return rentPrice;
+    }
+    public boolean isAvailable(){
+        return isAvailable;
+    }
+    public int getFloor (){
+    return floor;
+    }
+    public String getRoomType(){
         return roomType;
     }
 
-    public boolean getIsAvailable() {
-        return isAvailable;
+    public void setRentPrice(double rentPrice){
+        if(rentPrice>0){
+            this.rentPrice= rentPrice;
+        }
     }
-    public double getRentPrice() {
-        return rentPrice;
+    public static int getTotalRooms() {
+        return totalRooms;
+        
+    }   
+    @Override
+        public String toString() {
+            return "Room " + roomNumber + " (" + roomType + "), Floor: " + floor +
+                ", Rent: $" + rentPrice + ", Available: " + isAvailable;
     }
-    public int getFloor() {
-        return floor;
-    }
-    public void displayRoomInfo() {
-        System.out.println("--------------Room Information----------------");
-        System.out.println("Room Number: " + roomNumber);
-        System.out.println("Room Type: " + roomType);
-        System.out.println("Available: " + isAvailable);
-        System.out.println("Floor: " + floor);
-        System.out.println("Rent Price: $" + rentPrice);
-
-    }
+    
 }
