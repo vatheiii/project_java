@@ -18,24 +18,31 @@ public class Main {
         Bill bill1 = new Bill(contract1, 10, 50);
         bills.add(bill1);
         System.out.println(bill1);
+
         System.out.println("F1: Primitive Copy Proof");
         double originalRent = 500.0;
         double copiedRent = originalRent;
         copiedRent += 100.0;
         System.out.println("Original Rent Price: " + originalRent); 
         System.out.println("Copied Rent Price after modification: " + copiedRent);
+
+
         System.out.println("\nF2: Reference Copy Proof");
         Room roomRef1 = room1;
         Room roomRef2 = roomRef1;
         roomRef2.rentPrice = 600.00;
         System.out.println("Room 1 Rent Price: " + roomRef1.rentPrice);
         System.out.println("Room 2 Rent Price after modification: " + roomRef2.rentPrice);
+
+
         System.out.println("\nF3: Array store Reference Proof");
         Room[] roomArray = new Room[2];
         roomArray[0] = room1;
         roomArray[1] = room2;
         System.out.println("Room 1 Rent Price after modification: " + room1.rentPrice);
         System.out.println("Room 2 Rent Price (unchanged): " + room2.rentPrice);
+
+        
         System.out.println("\nF4: Snapshot behavior Proof"); 
         // Save a primitive snapshot of the rent at contract creation (primitive copy)
         double contractSnapshot = contract1.rentAtContractTime;

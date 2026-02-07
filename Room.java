@@ -41,10 +41,14 @@ public class Room {
         return totalRooms;
         
     }   
-    @Override
+   @Override
         public String toString() {
-            return "Room " + roomNumber + " (" + roomType + "), Floor: " + floor +
-                ", Rent: $" + rentPrice + ", Available: " + isAvailable;
+            return
+            "Room Number: " + roomNumber + ", " + "\n"+
+            "Room Type: " + roomType + ", " + "\n"+
+            "Floor: " + floor + ", " + "\n"+
+            "Rent: $" + rentPrice + ", " + "\n"+
+            "Available: " + isAvailable;
     }
     
 }
