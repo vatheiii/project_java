@@ -2,17 +2,10 @@ import java.util.ArrayList;//to store data
 import java.util.Scanner;// to read input of user
 
 class Choice {
-
-
-   static Scanner scanner;
-
-
- Choice(ArrayList<Room> rooms, ArrayList<Tenant> tenants, ArrayList<Contract> contracts, ArrayList<Bill>bills) {
+static Scanner scanner;
+Choice(ArrayList<Room> rooms, ArrayList<Tenant> tenants, ArrayList<Contract> contracts, ArrayList<Bill>bills) {
         displayMenu(rooms, tenants, contracts,bills);
-    }
-
-
-
+}
 static void displayMenu(ArrayList<Room> rooms, ArrayList<Tenant> tenants, ArrayList<Contract> contracts,ArrayList<Bill>bills){
         scanner = new Scanner(System.in);
           System.out.println("-------Apartment Management System-------");

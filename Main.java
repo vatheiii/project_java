@@ -21,10 +21,10 @@ public class Main {
         bills.add(b1);
 
         //F1 : Primative Copy
-        double a = 200;
+        double a = 100;
         double b = a;
         b+=50;
-        System.out.println("F1"+ a +"and"+ b);
+        System.out.println("F1"+a+"vs"+b);
 
         //F2 : Reference Copy
         Room r2 = room1;
@@ -44,5 +44,3 @@ public class Main {
         Choice.displayMenu(rooms, tenants, contracts, bills);
     }
 }
-
-

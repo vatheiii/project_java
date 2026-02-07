@@ -1,4 +1,3 @@
-
 public class Contract {
     private Room room;                  //reference type
     private Tenant tenant;              //reference type
