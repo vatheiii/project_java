@@ -1,12 +1,11 @@
-public class Tenant {
-    private String name;
-    private int age;
-    private String phoneNumber;
-    private String email;
-    private Room room;
-    private String TenantId;
-    
-    public Tenant(String name, String phoneNumber, String email,
+class Tenant {
+    String name;
+    int age;
+    String phoneNumber;
+    String email;
+    Room room;
+    String TenantId;
+Tenant(String name, String phoneNumber, String email,
         Room room, boolean hasActiveContract, String TenantId, int age) {
         this.name = name;
         this.age = age;
@@ -14,30 +13,18 @@ public class Tenant {
         this.email = email;
         this.room = room;
         this.TenantId = TenantId;
-
-    }
-
-    public String getName() {
+}
+String getName() {
         return name;
+}
+void displayTenantInfo() {
+     System.out.println("-------------Tenant Information-------------");
+     System.out.println("Name: " + name);
+     System.out.println("Age: " + age);
+     System.out.println("Phone Number: " + phoneNumber);
+     System.out.println("Email: " + email);
+     System.out.println("Room Number: " + room.roomNumber);
+     System.out.println("Tenant ID: " + TenantId);
     }
-    
-    public int getAge() {
-        return age;
-    }
-    
-    public String getPhoneNum() {
-        return phoneNumber;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public Room getRoom() {
-        return room;
-    }
-    
-    public String getID() {
-        return TenantId;
-    }
+
 }
