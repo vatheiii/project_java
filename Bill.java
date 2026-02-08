@@ -3,7 +3,7 @@ public class Bill {
     private int waterUsed;
     private int electricityUsed;
     
-public Bill (Contract contract, int waterUsed, int electricityUsed){
+public Bill(Contract contract, int waterUsed, int electricityUsed){
     this.contract = contract;
     this.waterUsed = waterUsed;
     this.electricityUsed = electricityUsed;
@@ -27,7 +27,7 @@ public String toString() {
           + "Room: " + contract.getTenant().getRoom().getRoomNumber() + "\n"
           + "Rent: $" + contract.getRentAtContractTime() + "\n"
           + "Water Bill: $" + calculateWaterBill() + " (" + waterUsed + " m3)\n"
-          + "Electricity Bill: $" + electricityBill() + " (" + electricityUsed + " m3)\n"
+          + "Electricity Bill: $" + electricityBill() + " (" + electricityUsed + " kWh)\n"
           + "TOTAL: $" + calculateTotalBill();
 }
 

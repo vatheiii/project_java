@@ -76,6 +76,10 @@ public class Contract {
         return rentAtContractTime;
     }
 
+    public Tenant getTenant() {
+        return tenant;
+    }
+
     public static int getTotalContractCount() {
         return totalContractCount;
     }
