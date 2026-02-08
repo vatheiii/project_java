@@ -13,7 +13,7 @@ public class Main {
         rooms.add(room2);
         Tenant tenant1 = new Tenant("Alice", "012345678", "alice@gmail.com", room2, true, "ID12345", 18);
         tenants.add(tenant1);
-        Contract contract1 = new Contract( room2 ,tenant1, "2023-01-01", 0.5, 0.5);
+        Contract contract1 = new Contract( room2 ,tenant1, "2023-01-01", 0.5, 0.5, 1);
         contracts.add(contract1);
         Bill bill1 = new Bill(contract1, 10, 50);
         bills.add(bill1);
@@ -30,29 +30,29 @@ public class Main {
         System.out.println("\nF2: Reference Copy Proof");
         Room roomRef1 = room1;
         Room roomRef2 = roomRef1;
-        roomRef2.rentPrice = 600.00;
-        System.out.println("Room 1 Rent Price: " + roomRef1.rentPrice);
-        System.out.println("Room 2 Rent Price after modification: " + roomRef2.rentPrice);
+        roomRef2.setRentPrice(600.00);
+        System.out.println("Room 1 Rent Price: " + roomRef1.getRentPrice());
+        System.out.println("Room 2 Rent Price after modification: " + roomRef2.getRentPrice());
 
 
         System.out.println("\nF3: Array store Reference Proof");
         Room[] roomArray = new Room[2];
         roomArray[0] = room1;
         roomArray[1] = room2;
-        System.out.println("Room 1 Rent Price after modification: " + room1.rentPrice);
-        System.out.println("Room 2 Rent Price (unchanged): " + room2.rentPrice);
+        System.out.println("Room 1 Rent Price after modification: " + room1.getRentPrice());
+        System.out.println("Room 2 Rent Price (unchanged): " + room2.getRentPrice());
 
         
         System.out.println("\nF4: Snapshot behavior Proof"); 
         // Save a primitive snapshot of the rent at contract creation (primitive copy)
-        double contractSnapshot = contract1.rentAtContractTime;
+        double contractSnapshot = contract1.getRentAtContractTime();
         // Modify the room's current rent 
-        room2.rentPrice = 900.0;
+        room2.setRentPrice(900.0);
         System.out.println("Room Rent Price at Contract Time (saved in contract): " + contractSnapshot); 
-        System.out.println("Current Room Rent Price after modification: " + room2.rentPrice);
-        System.out.println("Contract Rent Price during creation: " + contract1.rentAtContractTime);
-        System.out.println("Current Room price: " + room1.rentPrice);
-        System.out.println("Current Room price: " + room2.rentPrice);
+        System.out.println("Current Room Rent Price after modification: " + room2.getRentPrice());
+        System.out.println("Contract Rent Price during creation: " + contract1.getRentAtContractTime());
+        System.out.println("Current Room price: " + room1.getRentPrice());
+        System.out.println("Current Room price: " + room2.getRentPrice());
         // System.out.println("\nFind Contract by Tenant Name");
         // contract1.findContractByTenant(contracts, "Bob");
     }
