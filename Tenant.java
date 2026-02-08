@@ -8,7 +8,7 @@ public class Tenant {
     private Room room;
     private String TenantId;
 
-public Tenant(String name, String phoneNumber, String email,
+Tenant(String name, String phoneNumber, String email,
         Room room, boolean hasActiveContract, String TenantId, int age) {
         this.name = name;
         this.age = age;
