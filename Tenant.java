@@ -53,15 +53,7 @@ public void setPhoneNumber(String phoneNumber) {
                 System.out.println("Phone number cannot be empty.");
         }
 }
-public void displayTenantInfo() {
-     System.out.println("-------------Tenant Information-------------");
-     System.out.println("Name: " + name);
-     System.out.println("Age: " + age);
-     System.out.println("Phone Number: " + phoneNumber);
-     System.out.println("Email: " + email);
-     System.out.println("Room Number: " + room.getRoomNumber());
-     System.out.println("Tenant ID: " + TenantId);
-    }
+
 
 @Override
 public String toString() {
