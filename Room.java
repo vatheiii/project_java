@@ -1,54 +1,60 @@
+
+import java.util.ArrayList;
+
 public class Room {
-    private int roomNumber;
+    private int roomId;
     private String roomType;
     private boolean isAvailable;
     private double rentPrice;
     private int floor;
 
-    private static int totalRooms =0;
 
-    public Room(int roomNumber, String roomType, boolean isAvailable, double rentPrice, int floor) {
-        this.roomNumber = roomNumber;
-        this.roomType = roomType;
-        this.isAvailable = isAvailable;
-        this.rentPrice = rentPrice;
-        this.floor = floor;
-        totalRooms++;
+    public Room(int roomId, String roomType, boolean isAvailable, double rentPrice, int floor) {
+        
+            this.roomId = roomId;
+            this.roomType = roomType;
+            this.isAvailable = isAvailable;
+            this.rentPrice = rentPrice;
+            this.floor = floor;
+     
+    }
+    public int getRoomId() {
+
+        return roomId;
     }
 
-    public int getRoomNumber(){
-        return roomNumber;
-    }
     public double getRentPrice(){
         return rentPrice;
     }
     public boolean isAvailable(){
         return isAvailable;
     }
-    public int getFloor (){
-    return floor;
-    }
+
     public String getRoomType(){
         return roomType;
+    }
+
+    public void setAvailable(boolean available){
+        this.isAvailable = available;
     }
 
     public void setRentPrice(double rentPrice){
         if(rentPrice>0){
             this.rentPrice= rentPrice;
+        }else{
+            System.out.println("Rent price must be positive.");
         }
     }
-    public static int getTotalRooms() {
-        return totalRooms;
-        
-    }   
    @Override
         public String toString() {
             return
-            "Room Number: " + roomNumber + ", " + "\n"+
+            "Room Number: " + roomId + ", " + "\n"+
             "Room Type: " + roomType + ", " + "\n"+
             "Floor: " + floor + ", " + "\n"+
             "Rent: $" + rentPrice + ", " + "\n"+
-            "Available: " + isAvailable;
+            "Available: " + (isAvailable()? "Available" : "Not Available") + "\n"+
+            "=======================================";
+
     }
     
 }

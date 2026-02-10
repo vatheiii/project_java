@@ -1,6 +1,4 @@
 public class Tenant {
-    private static int totalTenants = 0;
-    
     private String name;
     private int age;
     private String phoneNumber;
@@ -11,28 +9,18 @@ public class Tenant {
 public Tenant(String name, String phoneNumber, String email,
         Room room, boolean hasActiveContract, String TenantId, int age) {
         this.name = name;
-        this.age = age;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.room = room;
         this.TenantId = TenantId;
-        totalTenants++;
+         this.age = age;
 }
 public String getName() {
         return name;
 }
 
-public static int getTotalTenants() {
-        return totalTenants;
-}
 
-public int getAge() {
-        return age;
-}
 
-public String getPhoneNumber() {
-        return phoneNumber;
-}
 
 public String getEmail() {
         return email;
@@ -88,6 +76,7 @@ public void setName(String name) {
         }
 }
 public void setAge(int age) {
+        
         if (age >= 18 && age <= 100) {
                 this.age = age;
         } else {
@@ -97,14 +86,15 @@ public void setAge(int age) {
 
 @Override
 public String toString() {
-    return "Tenant{" +
-            "name='" + name + '\'' +
-            ", age=" + age +
-            ", phoneNumber='" + phoneNumber + '\'' +
-            ", email='" + email + '\'' +
-            ", roomNumber=" + room.getRoomNumber() +
-            ", TenantId='" + TenantId + '\'' +
-            '}';
+    return  "-------------Tenant Details-------------\n"
+          + "ID: " + TenantId + "\n"
+          + "Name: " + name + "\n"
+          + "Age: " + age + "\n"
+          + "Phone: " + phoneNumber + "\n"
+          + "Email: " + email + "\n"
+          + "Room: " + room.getRoomId()
+          +"\n========================================";
+          
 }
 
 }

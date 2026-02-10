@@ -20,16 +20,17 @@ public double calculateTotalBill(){
     +electricityBill();
 }
 
+ 
 @Override
 public String toString() {
     return  "-------------Monthly Bill-------------\n"
           + "Tenant: " + contract.getTenant().getName() + "\n"
-          + "Room: " + contract.getTenant().getRoom().getRoomNumber() + "\n"
+          + "Room: " + contract.getTenant().getRoom().getRoomId() + "\n"
           + "Rent: $" + contract.getRentAtContractTime() + "\n"
           + "Water Bill: $" + calculateWaterBill() + " (" + waterUsed + " m3)\n"
           + "Electricity Bill: $" + electricityBill() + " (" + electricityUsed + " kWh)\n"
-          + "TOTAL: $" + calculateTotalBill();
+          + "TOTAL: $" + calculateTotalBill()
+          + "\n======================================";
 }
-
     
 }
