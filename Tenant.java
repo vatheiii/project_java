@@ -8,7 +8,7 @@ public class Tenant {
     private Room room;
     private String TenantId;
 
-Tenant(String name, String phoneNumber, String email,
+public Tenant(String name, String phoneNumber, String email,
         Room room, boolean hasActiveContract, String TenantId, int age) {
         this.name = name;
         this.age = age;
@@ -47,13 +47,53 @@ public String getTenantId() {
 }
 
 public void setPhoneNumber(String phoneNumber) {
-        if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
+        String phoneRegex = "^\\+855[0-9]{8,9}$";
+        if (phoneNumber != null && phoneNumber.matches(phoneRegex)) {
                 this.phoneNumber = phoneNumber;
-        } else {
+        } else if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
                 System.out.println("Phone number cannot be empty.");
+        } else {
+                System.out.println("Invalid phone number format.");
         }
 }
-
+public void setEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        
+        if (email != null && email.matches(emailRegex)) {
+                this.email = email;
+        } else if (email == null || email.trim().isEmpty()) {
+                System.out.println("Email cannot be empty.");
+        } else {
+                System.out.println("Invalid email format. Example: user@example.com");
+        }
+}
+public void setRoom(Room room) {
+        if (room != null) {
+                this.room = room;
+        } else {
+                System.out.println("Room cannot be null.");
+        }
+}
+public void setName(String name) {
+        String nameRegex = "^[A-Za-z ]{2,}$";
+        
+        if (name != null && name.matches(nameRegex)) {
+                this.name = name;
+        } else if (name == null || name.trim().isEmpty()) {
+                System.out.println("Name cannot be empty.");
+        } else if (name.length() < 2) {
+                System.out.println("Name must be at least 2 characters long.");
+        } else {
+                System.out.println("Invalid name format.");
+        }
+}
+public void setAge(int age) {
+        if (age >= 18 && age <= 100) {
+                this.age = age;
+        } else {
+                System.out.println("Age must be between 18 and 100.");
+        }
+}
 
 @Override
 public String toString() {
