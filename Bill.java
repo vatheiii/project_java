@@ -32,5 +32,4 @@ public String toString() {
           + "TOTAL: $" + calculateTotalBill()
           + "\n======================================";
 }
-    
 }

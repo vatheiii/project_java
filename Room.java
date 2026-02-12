@@ -34,6 +34,18 @@ public class Room {
         return roomType;
     }
 
+    public int getFloor() {
+        return floor;
+    }   
+
+    public void setFloor(int floor) {
+        if (floor > 0) {
+            this.floor = floor;
+        } else {
+            System.out.println("Floor number must be above ground floor.");
+        }
+    }
+
     public void setAvailable(boolean available){
         this.isAvailable = available;
     }
