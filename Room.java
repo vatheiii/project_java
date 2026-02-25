@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 
 public class Room {
@@ -57,6 +56,8 @@ public class Room {
             System.out.println("Rent price must be positive.");
         }
     }
+
+    
    @Override
         public String toString() {
             return

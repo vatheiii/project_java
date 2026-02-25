@@ -5,23 +5,21 @@ public class Tenant {
     private String email;
     private Room room;
     private String TenantId;
+    private String password;
 
 public Tenant(String name, String phoneNumber, String email,
-        Room room, boolean hasActiveContract, String TenantId, int age) {
+        Room room,  String TenantId, int age, String password) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.room = room;
         this.TenantId = TenantId;
-         this.age = age;
+        this.age = age;
+        this.password = password;
 }
 public String getName() {
         return name;
 }
-
-
-
-
 public String getEmail() {
         return email;
 }

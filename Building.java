@@ -1,7 +1,7 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-
 public class Building {
+        public static final String CREATE_ROOM = "Create_Room";
+
     private String name;
     private String address;
     private ArrayList<Room> rooms;
@@ -52,8 +52,6 @@ public class Building {
     public ArrayList<Room> getRooms() {
         return rooms;
     }
-
-
     @Override
     public String toString() {
         return "Building Name: " + name + "\n" +
