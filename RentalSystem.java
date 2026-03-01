@@ -23,7 +23,7 @@ public static final String Update_Bill = "Update Bill";
         public java.util.ArrayList<Iuser> getUsers() {
             return users;
         }
-    private Iuser loggedInUser;
+    private Iuser loggedInUser; 
     public RentalSystem() {
         users.add(new LandLord("A01", "admin", "1234"));
         users.add(new TenantAcc("001", "tenant","1234" ));
@@ -58,7 +58,7 @@ public static final String Update_Bill = "Update Bill";
     public void addUser(Iuser user) {
         users.add(user);
     }
-    
+
     public boolean requirePermission(String action) {
         if (!isUserLoggedIn()) {
             System.out.println("No user logged in!");
