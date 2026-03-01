@@ -20,11 +20,16 @@ public static final String Update_Bill = "Update Bill";
     
 
     private ArrayList<Iuser> users = new ArrayList<>();
+        public java.util.ArrayList<Iuser> getUsers() {
+            return users;
+        }
     private Iuser loggedInUser;
     public RentalSystem() {
         users.add(new LandLord("A01", "admin", "1234"));
         users.add(new TenantAcc("001", "tenant","1234" ));
+        users.add(new Manager("M01", "manager", "1234"));
     }
+
     public boolean login(String username, String password) {
         for (Iuser user : users) {
             if (user.getUserName().equals(username) && user.getPassword().equals(password)) {
@@ -36,10 +41,12 @@ public static final String Update_Bill = "Update Bill";
         System.out.println("Invalid username or password!");
         return false;
     }
+
     public void logout() {
         loggedInUser = null;
         System.out.println("Logged out");
     }
+
     public boolean isUserLoggedIn() {
         return loggedInUser != null;
     }
@@ -47,9 +54,11 @@ public static final String Update_Bill = "Update Bill";
     public Iuser getLoggedInUser() {
         return loggedInUser;
     }
+
     public void addUser(Iuser user) {
         users.add(user);
     }
+    
     public boolean requirePermission(String action) {
         if (!isUserLoggedIn()) {
             System.out.println("No user logged in!");

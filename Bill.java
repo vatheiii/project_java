@@ -1,4 +1,7 @@
 public class Bill {
+        public Contract getContract() {
+            return contract;
+        }
     private Room room;
     private Contract contract;
     private int waterUsed;
