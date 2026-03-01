@@ -24,6 +24,7 @@ public static final String Update_Bill = "Update Bill";
     public RentalSystem() {
         users.add(new LandLord("A01", "admin", "1234"));
         users.add(new TenantAcc("001", "tenant","1234" ));
+        users.add(new Manager("M01", "manager", "1234"));
     }
     public boolean login(String username, String password) {
         for (Iuser user : users) {

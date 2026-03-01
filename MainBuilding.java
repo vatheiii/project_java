@@ -13,6 +13,7 @@ public class MainBuilding {
 
         if (!system.login(username, password)) {
             System.out.println("Login failed. Exiting.");
+            sc.close();
             return;
         }
         int choice;
@@ -53,34 +54,11 @@ public class MainBuilding {
                     building.showRooms();
                     break;
 
-                case 3: 
-                    // if (!system.requirePermission("Create_Tenant")) break;
-                    // System.out.print("Enter Tenant Name: ");
-                    // String name = sc.nextLine();
-                    // sc.nextLine();
-                    // System.out.print("Enter Tenant Age: ");
-                    // int age = sc.nextInt();
-                    // sc.nextLine();
-                    // System.out.print("Enter Tenant Phone Number: ");
-                    // String phoneNumber = sc.nextLine();
-                    // sc.nextLine();
-                    // System.out.print("Enter Tenant E-Mail: ");
-                    // String email = sc.nextLine();
-                    // sc.nextLine();
-                    // System.out.print("Enter Room Number: ");
-                    // int roomNum = sc.nextInt();
-                    // sc.nextLine();
-                    // System.out.print("Enter Tenant ID: ");
-                    // String ID = sc.nextLine();
-                    // sc.nextLine();
-                    // System.out.print("Enter Tenant Password: ");
-                    // String passwords = sc.nextLine();
-                    // sc.nextLine();
-                    // Tenant tenant = new Tenant(name, age, phoneNumber, email, room, TenantId , password );
-                    // tenant.;
-                    // System.out.println("Tenant added!");
-                    // break;
-                    
+                case 3:
+                    // delegate to static contract submenu
+                    Contract.contractDisplayMenu(system);
+                    break;
+
                 case 4:
 
                     break;
