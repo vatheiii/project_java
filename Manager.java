@@ -1,22 +1,10 @@
-public class Manager implements Iuser {
-    private String Id;
-    private String Username;
-    private String Password;
+public class Manager extends UserBase {
 
-public Manager(String Id,String Username, String Password){
-    this.Id=Id;
-    this.Username=Username;
-    this.Password=Password;
+public Manager(String Id, String Username, String Password) {
+    super(Id, Username, Password);
 }
-public String getID(){
-    return Id;
-}
-public String getUserName(){
-    return Username;
-}
-public String getPassword(){
-    return Password;
-}
+
+@Override
 public String getRole(){
     return "Manager";
 }

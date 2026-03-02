@@ -1,25 +1,13 @@
-public class LandLord implements Iuser{
-    private String Id;
-    private String Username;
-    private String Password;
+public class LandLord extends UserBase {
 
-public LandLord(String Id,String Username, String Password){
-    this.Id=Id;
-    this.Username=Username;
-    this.Password=Password;
+public LandLord(String Id, String Username, String Password) {
+    super(Id, Username, Password);
 }
-public String getID(){
-    return Id;
-}
-public String getUserName(){
-    return Username;
-}
-public String getPassword(){
-    return Password;
-}
+@Override
 public String getRole(){
     return "Landlord";
 }
+@Override
 public boolean can (String action){
     return true;
 }
