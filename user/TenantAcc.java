@@ -1,3 +1,6 @@
+package user;
+import Other.Tenant;
+import controller.RentalSystem;
 public class TenantAcc extends UserBase {
     private Tenant tenant;
 

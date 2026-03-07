@@ -1,3 +1,4 @@
+package Other;
 public class Tenant {
     private String name;
     private int age;

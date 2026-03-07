@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+package Other;
 
 public class Room {
     private int roomId;

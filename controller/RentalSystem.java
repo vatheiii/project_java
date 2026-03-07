@@ -1,4 +1,13 @@
+package controller;
 import java.util.ArrayList;
+
+import Other.Building;
+import Other.Room;
+import user.LandLord;
+import user.Manager;
+import user.TenantAcc;
+import user.UserBase;
+import user.Iuser;
 public class RentalSystem {
 
 public static final String Add_Manager = "Add Manager";
@@ -20,14 +29,14 @@ public static final String Update_Bill = "Update Bill";
     
 
     private ArrayList<Iuser> users = new ArrayList<>();
-        public java.util.ArrayList<Iuser> getUsers() {
+    public ArrayList<Iuser> getUsers() {
             return users;
         }
     private Iuser loggedInUser; 
     public RentalSystem() {
-        users.add(new LandLord("A01", "admin", "1234"));
+        users.add(new LandLord(new UserBase("A01", "admin", "1234"), "012345678", "admin@email.com"));
         users.add(new TenantAcc("001", "tenant","1234" ));
-        users.add(new Manager("M01", "manager", "1234"));
+        users.add(new Manager("M01", "manager", "1234", "012345679"));
     }
 
     public boolean login(String username, String password) {
@@ -69,5 +78,35 @@ public static final String Update_Bill = "Update Bill";
             return false;
         }
         return true;
+    }
+        public boolean createRoom(Building building, Room room, double rentPrice, int floor) {
+        if (!requirePermission(Create_Room)) return false;
+
+        if (rentPrice <= 0) {
+            System.out.println("Rent price must be positive.");
+            return false;
+        }
+
+        if (floor <= 0) {
+            System.out.println("Floor must be above ground floor.");
+            return false;
+        }
+
+        if (building.isRoomExist(room.getRoomId())) {
+            System.out.println("Room ID " + room.getRoomId() + " already exists!");
+            return false;
+        }
+        room.setRentPrice(rentPrice);
+        room.setFloor(floor);
+        building.addRoom(room);
+
+        System.out.println("Room added successfully.");
+        return true;
+    }
+
+    public void viewRooms(Building building) {
+        if (!requirePermission(View_Room)) return;
+
+        building.showRooms();
     }
 }

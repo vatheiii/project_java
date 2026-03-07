@@ -1,4 +1,16 @@
+package controller;
 import java.util.Scanner;
+
+import Other.Bill;
+import Other.Building;
+import Other.Contract;
+import Other.Room;
+import Other.Tenant;
+import user.Manager;
+import user.TenantAcc;
+import user.Iuser;
+import user.LandLord;
+import controller.RentalSystem;
 
 public class MainBuilding {
     // Store contracts for all tenants
@@ -8,9 +20,22 @@ public class MainBuilding {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         RentalSystem system = new RentalSystem();
-        Building building = new Building("Sunrise Apartment", "Phnom Penh");
+       Building building = new Building("Sunrise Apartments", "123 Main St, Phnom Penh");
+       LandLord landlord = null;
+        Manager manager = null;
+        for (Iuser user : system.getUsers()) {
+            if (user instanceof LandLord) {
+                landlord = (LandLord) user;
+            } else if (user instanceof Manager) {
+                manager = (Manager) user;
+            }
+        }
         while (true) {
+
             System.out.println("=== Welcome to Rental System ===");
+            System.out.println("Landlord Contact: Phone=" + landlord.getPhone() + ", Email=" + landlord.getEmail());
+            System.out.println("Manager Contact: Phone=" + manager.getPhone());
+            System.out.println("=== Now login in Sunrise Apartments ===");
             System.out.print("Username: ");
             String username = sc.nextLine();
             System.out.print("Password: ");
@@ -24,7 +49,7 @@ public class MainBuilding {
             int choice;
             boolean loggedOut = false;
             do {
-                if (role.equals("Landlord")) {
+                if (role.equals("LandLord")) {
                     showLandlordMenu();
                     System.out.print("Choose: ");
                     choice = sc.nextInt();
@@ -65,7 +90,7 @@ public class MainBuilding {
             System.out.println("7) Exit");
         }
         public static boolean handleLandlordChoice(int choice, Building building, RentalSystem system, Scanner sc) {
-            final double DEFAULT_WATER_RATE = 0.75; // Example value, set as needed
+            final double DEFAULT_WATER_RATE = 0.55; // Example value, set as needed
             final double DEFAULT_ELECTRICITY_RATE = 0.20; // Example value, set as needed
             switch (choice) {
                 case 1: // Room submenu
@@ -84,10 +109,10 @@ public class MainBuilding {
                         String type = sc.nextLine().trim().toLowerCase();
                         double price;
                         if (type.equals("single")) {
-                            price = 100; // Default price for single room
+                            price = 200; // Default price for single room
                             System.out.println("Single room detected. ");
                         } else if (type.equals("double")) {
-                            price = 180; // Default price for double room
+                            price = 480; // Default price for double room
                             System.out.println("Double room detected.");
                         } else {
                             System.out.println("Invalid room type. Room not added.");
@@ -97,8 +122,8 @@ public class MainBuilding {
                         int floor = sc.nextInt();
                         sc.nextLine();
                         Room room = new Room(id, type, true, price, floor);
-                        building.addRoom(room, price, floor);
-                        System.out.println("Room added!");
+                         building.addRoom(room);
+                         System.out.println("Room added!");
                     } else if (roomChoice == 2) {
                         building.showRooms();
                     } else if (roomChoice == 3) {
@@ -127,12 +152,9 @@ public class MainBuilding {
                             System.out.print("Enter new Floor Number: ");
                             int newFloor = sc.nextInt();
                             sc.nextLine();
-                            // Update room fields
-                            // Note: Room ID update is not typical, but implemented as requested
-                            // To update roomId, we need to remove and re-add the room
                             building.getRooms().remove(roomToEdit);
                             roomToEdit = new Room(newRoomId, roomToEdit.getRoomType(), available, newPrice, newFloor);
-                            building.addRoom(roomToEdit, newPrice, newFloor);
+                            building.addRoom(roomToEdit);
                             System.out.println("Room updated!");
                         }
                     } else {
@@ -236,7 +258,9 @@ public class MainBuilding {
                         String managerUsername = sc.nextLine();
                         System.out.print("Enter Manager Password: ");
                         String managerPassword = sc.nextLine();
-                        Manager manager = new Manager(managerId, managerUsername, managerPassword);
+                        System.out.print("Enter Manager Phone: ");
+                        String managerPhone = sc.nextLine();
+                        Manager manager = new Manager(managerId, managerUsername, managerPassword, managerPhone);
                         system.addUser(manager);
                         System.out.println("Manager added successfully!");
                     } else if (managerChoice == 2) {
@@ -244,6 +268,7 @@ public class MainBuilding {
                         String removeId = sc.nextLine();
                         boolean removed = false;
                         java.util.Iterator<Iuser> it = system.getUsers().iterator();
+                        // Note: This will remove the first manager found with the matching ID
                         while (it.hasNext()) {
                             Iuser user = it.next();
                             if (user instanceof Manager && user.getID().equals(removeId)) {

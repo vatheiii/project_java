@@ -1,3 +1,4 @@
+package Other;
 public class Bill {
         public Contract getContract() {
             return contract;
