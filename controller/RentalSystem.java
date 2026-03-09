@@ -40,8 +40,26 @@ public static final String Update_Bill = "Update Bill";
     }
 
     public boolean login(String username, String password) {
+        if (username == null || password == null) {
+            System.out.println("Invalid username or password!");
+            return false;
+        }
+
         for (Iuser user : users) {
-            if (user.getUserName().equals(username) && user.getPassword().equals(password)) {
+            if (!user.getUserName().equals(username)) {
+                continue;
+            }
+
+            boolean authenticated;
+            if (user instanceof UserBase) {
+                // Prefer encapsulated password verification over raw password comparison.
+                authenticated = ((UserBase) user).checkPassword(password);
+            } else {
+                // Backward-compatible fallback for non-UserBase implementations.
+                authenticated = user.getPassword().equals(password);
+            }
+
+            if (authenticated) {
                 loggedInUser = user;
                 System.out.println("Login successful as " + user.getRole());
                 return true;

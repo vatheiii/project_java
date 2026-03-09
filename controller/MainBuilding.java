@@ -94,78 +94,127 @@ public class MainBuilding {
             final double DEFAULT_ELECTRICITY_RATE = 0.20; // Example value, set as needed
             switch (choice) {
                 case 1: // Room submenu
-                    System.out.println("--- Room Menu ---");
-                    System.out.println("1) Add Room");
-                    System.out.println("2) Show Rooms");
-                    System.out.println("3) Edit Room");
-                    System.out.print("Choose: ");
-                    int roomChoice = sc.nextInt();
-                    sc.nextLine();
-                    if (roomChoice == 1) {
-                        System.out.print("Enter Room ID: ");
-                        int id = sc.nextInt();
+                    while (true) {
+                        System.out.println("--- Room Menu ---");
+                        System.out.println("1) Add Room");
+                        System.out.println("2) Show Rooms");
+                        System.out.println("3) Edit Room");
+                        System.out.println("4) Back to Landlord Menu");
+                        System.out.print("Choose: ");
+                        int roomChoice = sc.nextInt();
                         sc.nextLine();
-                        System.out.print("Enter Room Type (single/double): ");
-                        String type = sc.nextLine().trim().toLowerCase();
-                        double price;
-                        if (type.equals("single")) {
-                            price = 200; // Default price for single room
-                            System.out.println("Single room detected. ");
-                        } else if (type.equals("double")) {
-                            price = 480; // Default price for double room
-                            System.out.println("Double room detected.");
-                        } else {
-                            System.out.println("Invalid room type. Room not added.");
-                            return false;
-                        }
-                        System.out.print("Enter Floor Number: ");
-                        int floor = sc.nextInt();
-                        sc.nextLine();
-                        Room room = new Room(id, type, true, price, floor);
-                         building.addRoom(room);
-                         System.out.println("Room added!");
-                    } else if (roomChoice == 2) {
-                        building.showRooms();
-                    } else if (roomChoice == 3) {
-                        System.out.print("Enter Room ID to edit: ");
-                        int editId = sc.nextInt();
-                        sc.nextLine();
-                        Room roomToEdit = null;
-                        for (Room r : building.getRooms()) {
-                            if (r.getRoomId() == editId) {
-                                roomToEdit = r;
-                                break;
+                        if (roomChoice == 1) {
+                            System.out.print("Enter Room ID: ");
+                            int id = sc.nextInt();
+                            sc.nextLine();
+                            System.out.print("Enter Room Type (single/double): ");
+                            String type = sc.nextLine().trim().toLowerCase();
+                            double price;
+                            if (type.equals("single")) {
+                                price = 200; // Default price for single room
+                                System.out.println("Single room detected. ");
+                            } else if (type.equals("double")) {
+                                price = 480; // Default price for double room
+                                System.out.println("Double room detected.");
+                            } else {
+                                System.out.println("Invalid room type. Room not added.");
+                                continue;
                             }
-                        }
-                        if (roomToEdit == null) {
-                            System.out.println("Room not found.");
+                            System.out.print("Enter Floor Number: ");
+                            int floor = sc.nextInt();
+                            sc.nextLine();
+                            Room room = new Room(id, type, true, price, floor);
+                            building.addRoom(room);
+                            System.out.println("Room added!");
+                            continue;
+                        } else if (roomChoice == 2) {
+                            building.showRooms();
+                            continue;
+                        } else if (roomChoice == 3) {
+                            System.out.print("Enter Room ID to edit: ");
+                            int editId = sc.nextInt();
+                            sc.nextLine();
+                            Room roomToEdit = null;
+                            for (Room r : building.getRooms()) {
+                                if (r.getRoomId() == editId) {
+                                    roomToEdit = r;
+                                    break;
+                                }
+                            }
+                            if (roomToEdit == null) {
+                                System.out.println("Room not found.");
+                                continue;
+                            } else {
+                                System.out.print("Enter new Room ID: ");
+                                int newRoomId = sc.nextInt();
+                                sc.nextLine();
+
+                                boolean sameRoomNumber = newRoomId == roomToEdit.getRoomId();
+                                if (sameRoomNumber) {
+                                    System.out.println("Room number unchanged. You can still update other fields.");
+                                }
+
+                                boolean idConflict = false;
+                                if (!sameRoomNumber) {
+                                    for (Room r : building.getRooms()) {
+                                        if (r.getRoomId() == newRoomId && r != roomToEdit) {
+                                            idConflict = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (idConflict) {
+                                    System.out.println("Room number already in use. Update cancelled.");
+                                    continue;
+                                }
+
+                                System.out.print("Set room as available? (y/n): ");
+                                String availInput = sc.nextLine();
+                                boolean available = availInput.equalsIgnoreCase("y");
+                                System.out.print("Enter new Rent Price: ");
+                                double newPrice = sc.nextDouble();
+                                sc.nextLine();
+                                System.out.print("Enter new Floor Number: ");
+                                int newFloor = sc.nextInt();
+                                sc.nextLine();
+                                building.getRooms().remove(roomToEdit);
+                                roomToEdit = new Room(newRoomId, roomToEdit.getRoomType(), available, newPrice, newFloor);
+                                building.addRoom(roomToEdit);
+
+                                // Update any tenant and contract that referred to the old room ID
+                                for (Iuser user : system.getUsers()) {
+                                    if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
+                                        Tenant t = ((TenantAcc) user).getTenant();
+                                        if (t.getRoom() != null && t.getRoom().getRoomId() == editId) {
+                                            t.setRoom(roomToEdit);
+                                        }
+                                    }
+                                }
+                                for (Contract c : contracts) {
+                                    if (c.getRoom() != null && c.getRoom().getRoomId() == editId) {
+                                        c.setRoom(roomToEdit);
+                                    }
+                                }
+
+                                System.out.println("Room updated!");
+                                continue;
+                            }
+                        } else if (roomChoice == 4) {
+                            break;
                         } else {
-                            System.out.print("Enter new Room Number: ");
-                            int newRoomId = sc.nextInt();
-                            sc.nextLine();
-                            System.out.print("Set room as available? (y/n): ");
-                            String availInput = sc.nextLine();
-                            boolean available = availInput.equalsIgnoreCase("y");
-                            System.out.print("Enter new Rent Price: ");
-                            double newPrice = sc.nextDouble();
-                            sc.nextLine();
-                            System.out.print("Enter new Floor Number: ");
-                            int newFloor = sc.nextInt();
-                            sc.nextLine();
-                            building.getRooms().remove(roomToEdit);
-                            roomToEdit = new Room(newRoomId, roomToEdit.getRoomType(), available, newPrice, newFloor);
-                            building.addRoom(roomToEdit);
-                            System.out.println("Room updated!");
+                            System.out.println("Invalid choice.");
+                            continue;
                         }
-                    } else {
-                        System.out.println("Invalid choice.");
                     }
                     break;
                 case 2: // Tenant submenu
+                while (true) {
                     System.out.println("--- Tenant Menu ---");
                     System.out.println("1) Add Tenant");
-                    System.out.println("2) Delete Tenant");
-                    System.out.println("3) View Tenants");
+                    System.out.println("2) Edit Tenant");
+                    System.out.println("3) Delete Tenant");
+                    System.out.println("4) View Tenants");
+                    System.out.println("5) Back to Landlord Menu");
                     System.out.print("Choose: ");
                     int tenantChoice = sc.nextInt();
                     sc.nextLine();
@@ -175,23 +224,53 @@ public class MainBuilding {
                         System.out.print("Enter Tenant Age: ");
                         int age = sc.nextInt();
                         sc.nextLine();
+                        if (age < 18 || age > 100) {
+                            System.out.println("Tenant must be between 18 and 100 years old. Tenant not added.");
+                            continue;
+                        }
                         System.out.print("Enter Tenant Phone Number (+855...): ");
                         String phoneNumber = sc.nextLine();
                         System.out.print("Enter Tenant E-Mail: ");
                         String email = sc.nextLine();
-                        System.out.print("Enter Room ID: ");
-                        int roomId = sc.nextInt();
-                        sc.nextLine();
                         Room assignedRoom = null;
-                        for (Room r : building.getRooms()) {
-                            if (r.getRoomId() == roomId) {
-                                assignedRoom = r;
-                                break;
+                        while (true) {
+                            System.out.print("Enter Room ID: ");
+                            int roomId = sc.nextInt();
+                            sc.nextLine();
+
+                            for (Room r : building.getRooms()) {
+                                if (r.getRoomId() == roomId) {
+                                    assignedRoom = r;
+                                    break;
+                                }
                             }
+
+                            if (assignedRoom == null) {
+                                System.out.println("Room not found. Please enter a valid room ID.");
+                                continue;
+                            }
+
+                            boolean roomTaken = false;
+                            for (Iuser user : system.getUsers()) {
+                                if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
+                                    if (((TenantAcc) user).getTenant().getRoom().getRoomId() == assignedRoom.getRoomId()) {
+                                        roomTaken = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (roomTaken) {
+                                System.out.println("Room is already occupied. Please choose a different room.");
+                                assignedRoom = null;
+                                continue;
+                            }
+
+                            // found available room
+                            break;
                         }
                         if (assignedRoom == null) {
-                            System.out.println("Room not found. Tenant not added.");
-                            break;
+                            // If somehow no room was assigned, go back to tenant menu rather than exiting it
+                            continue;
                         }
                         System.out.print("Enter Tenant ID: ");
                         String tenantId = sc.nextLine();
@@ -206,7 +285,41 @@ public class MainBuilding {
                         Contract contract = new Contract(assignedRoom, tenant, startDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE);
                         contracts.add(contract);
                         System.out.println("Tenant and contract added successfully!");
+                        continue;
                     } else if (tenantChoice == 2) {
+                        System.out.print("Enter Tenant ID to edit: ");
+                        String editTenantId = sc.nextLine();
+                        // Implementation for editing tenant
+                        TenantAcc tenantAcc = null;
+                        for (Iuser user : system.getUsers()) {
+                            if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
+                                if (((TenantAcc) user).getTenant().getTenantId().equals(editTenantId)) {
+                                    tenantAcc = (TenantAcc) user;
+                                    break;
+                                }
+                            }
+                        }
+                        if (tenantAcc == null) {
+                            System.out.println("Tenant not found.");
+                        } else {
+                            Tenant tenant = tenantAcc.getTenant();
+                            System.out.print("Enter new phone number (+855...): ");
+                            String newPhone = sc.nextLine();
+                            tenant.setPhoneNumber(newPhone);
+                            System.out.print("Enter new email: ");
+                            String newEmail = sc.nextLine();
+                            tenant.setEmail(newEmail);
+                            // Replace all old contracts so edit does not add duplicates.
+                            removeAllContractsForTenant(editTenantId);
+                            // Create new contract
+                            System.out.print("Enter new contract start date (YYYY-MM-DD): ");
+                            String newStartDate = sc.nextLine();
+                            Contract newContract = new Contract(tenant.getRoom(), tenant, newStartDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE);
+                            contracts.add(newContract);
+                            System.out.println("Tenant updated and contract replaced!");
+                            continue;
+                        }
+                    } else if (tenantChoice == 3) {
                         System.out.print("Enter Tenant ID to delete: ");
                         String delTenantId = sc.nextLine();
                         boolean removed = false;
@@ -225,7 +338,7 @@ public class MainBuilding {
                         } else {
                             System.out.println("Tenant not found.");
                         }
-                    } else if (tenantChoice == 3) {
+                    } else if (tenantChoice == 4) {
                         System.out.println("--- All Tenants ---");
                         boolean foundTenant = false;
                         for (Iuser user : system.getUsers()) {
@@ -240,14 +353,19 @@ public class MainBuilding {
                         if (!foundTenant) {
                             System.out.println("No tenants found.");
                         }
+                    } else if (tenantChoice == 5) {
+                        break;
                     } else {
                         System.out.println("Invalid choice.");
                     }
-                    break;
+                }
+                break;
                 case 3: // Manager submenu
                     System.out.println("--- Manager Menu ---");
                     System.out.println("1) Add Manager");
                     System.out.println("2) Remove Manager");
+                    System.out.println("3) View Managers");
+                    System.out.println("4) Back to Landlord Menu");
                     System.out.print("Choose: ");
                     int managerChoice = sc.nextInt();
                     sc.nextLine();
@@ -281,123 +399,183 @@ public class MainBuilding {
                         } else {
                             System.out.println("Manager not found.");
                         }
+                    } else if (managerChoice == 3) {
+                        System.out.println("--- All Managers ---");
+                        boolean foundManager = false;
+                        for (Iuser user : system.getUsers()) {
+                            if (user instanceof Manager) {
+                                System.out.println("Manager ID: " + user.getID() + ", Phone: " + ((Manager) user).getPhone());
+                                foundManager = true;
+                            }
+                        }
+                        if (!foundManager) {
+                            System.out.println("No managers found.");
+                        }
+                    } else if (managerChoice == 4) {
+                        break;
                     } else {
                         System.out.println("Invalid choice.");
                     }
                     break;
                 case 4: // Contract submenu
-                    System.out.println("--- Contract Menu ---");
-                    System.out.println("1) Add Contract");
-                    System.out.println("2) Edit Contract");
-                    System.out.println("3) Delete Contract");
-                    System.out.println("4) View Contracts");
-                    System.out.print("Choose: ");
-                    int contractChoice = sc.nextInt();
-                    sc.nextLine();
-                    if (contractChoice == 1) {
-                        System.out.print("Enter Tenant ID: ");
-                        String tenantId = sc.nextLine();
-                        TenantAcc tenantAcc = null;
-                        for (Iuser user : system.getUsers()) {
-                            if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
-                                if (((TenantAcc) user).getTenant().getTenantId().equals(tenantId)) {
-                                    tenantAcc = (TenantAcc) user;
+                    while (true) {
+                        System.out.println("--- Contract Menu ---");
+                        System.out.println("1) Add Contract");
+                        System.out.println("2) Edit Contract");
+                        System.out.println("3) Delete Contract");
+                        System.out.println("4) View Contracts");
+                        System.out.println("5) Back to Landlord Menu");
+                        System.out.print("Choose: ");
+                        int contractChoice = sc.nextInt();
+                        sc.nextLine();
+                        if (contractChoice == 1) {
+                            System.out.print("Enter Tenant ID: ");
+                            String tenantId = sc.nextLine();
+                            TenantAcc tenantAcc = null;
+                            for (Iuser user : system.getUsers()) {
+                                if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
+                                    if (((TenantAcc) user).getTenant().getTenantId().equals(tenantId)) {
+                                        tenantAcc = (TenantAcc) user;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (tenantAcc == null) {
+                                System.out.println("Tenant not found.");
+                            } else {
+                                Tenant tenant = tenantAcc.getTenant();
+                                // Keep one current contract per tenant in this list.
+                                removeAllContractsForTenant(tenantId);
+                                System.out.print("Enter Contract Start Date (YYYY-MM-DD): ");
+                                String startDate = sc.nextLine();
+                                Contract contract = new Contract(tenant.getRoom(), tenant, startDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE);
+                                contracts.add(contract);
+                                System.out.println("Contract replaced successfully!");
+                            }
+                        } else if (contractChoice == 2) {
+                            System.out.print("Enter Contract Tenant ID to edit: ");
+                            String editId = sc.nextLine();
+
+                            // Ensure tenant still exists before editing contract.
+                            TenantAcc tenantAcc = null;
+                            for (Iuser user : system.getUsers()) {
+                                if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
+                                    if (((TenantAcc) user).getTenant().getTenantId().equals(editId)) {
+                                        tenantAcc = (TenantAcc) user;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (tenantAcc == null) {
+                                System.out.println("Tenant not found.");
+                                continue;
+                            }
+
+                            Contract contractToEdit = null;
+                            for (Contract c : contracts) {
+                                if (c.getTenant().getTenantId().equals(editId)) {
+                                    contractToEdit = c;
                                     break;
                                 }
                             }
-                        }
-                        if (tenantAcc == null) {
-                            System.out.println("Tenant not found.");
-                        } else {
-                            Tenant tenant = tenantAcc.getTenant();
-                            System.out.print("Enter Contract Start Date (YYYY-MM-DD): ");
-                            String startDate = sc.nextLine();
-                            Contract contract = new Contract(tenant.getRoom(), tenant, startDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE);
-                            contracts.add(contract);
-                            System.out.println("Contract added successfully!");
-                        }
-                    } else if (contractChoice == 2) {
-                        System.out.print("Enter Contract Tenant ID to edit: ");
-                        String editId = sc.nextLine();
-                        Contract contractToEdit = null;
-                        for (Contract c : contracts) {
-                            if (c.getTenant().getTenantId().equals(editId)) {
-                                contractToEdit = c;
-                                break;
+                            if (contractToEdit == null) {
+                                System.out.println("Contract not found for this tenant.");
+                            } else {
+                                System.out.print("Enter new Start Date (YYYY-MM-DD): ");
+                                String newStartDate = sc.nextLine();
+                                System.out.print("Enter new Water Rate: ");
+                                double newWaterRate = sc.nextDouble();
+                                sc.nextLine();
+                                System.out.print("Enter new Electricity Rate: ");
+                                double newElectricityRate = sc.nextDouble();
+                                sc.nextLine();
+                                // Create new contract and replace
+                                Contract updated = new Contract(contractToEdit.getRoom(), contractToEdit.getTenant(), newStartDate, newWaterRate, newElectricityRate);
+                                removeAllContractsForTenant(editId);
+                                contracts.add(updated);
+                                System.out.println("Contract updated!");
                             }
-                        }
-                        if (contractToEdit == null) {
-                            System.out.println("Contract not found.");
-                        } else {
-                            System.out.print("Enter new Start Date (YYYY-MM-DD): ");
-                            String newStartDate = sc.nextLine();
-                            System.out.print("Enter new Water Rate: ");
-                            double newWaterRate = sc.nextDouble();
-                            sc.nextLine();
-                            System.out.print("Enter new Electricity Rate: ");
-                            double newElectricityRate = sc.nextDouble();
-                            sc.nextLine();
-                            // Create new contract and replace
-                            Contract updated = new Contract(contractToEdit.getRoom(), contractToEdit.getTenant(), newStartDate, newWaterRate, newElectricityRate);
-                            contracts.remove(contractToEdit);
-                            contracts.add(updated);
-                            System.out.println("Contract updated!");
-                        }
-                    } else if (contractChoice == 3) {
-                        System.out.print("Enter Contract Tenant ID to delete: ");
-                        String delId = sc.nextLine();
-                        boolean removed = false;
-                        java.util.Iterator<Contract> it = contracts.iterator();
-                        while (it.hasNext()) {
-                            Contract c = it.next();
-                            if (c.getTenant().getTenantId().equals(delId)) {
-                                it.remove();
-                                removed = true;
+                        } else if (contractChoice == 3) {
+                            System.out.print("Enter Contract Tenant ID to delete: ");
+                            String delId = sc.nextLine();
+                            boolean removed = false;
+                            java.util.Iterator<Contract> it = contracts.iterator();
+                            while (it.hasNext()) {
+                                Contract c = it.next();
+                                if (c.getTenant().getTenantId().equals(delId)) {
+                                    it.remove();
+                                    removed = true;
+                                }
                             }
-                        }
-                        if (removed) {
-                            System.out.println("Contract deleted successfully.");
-                        } else {
-                            System.out.println("Contract not found.");
-                        }
-                    } else if (contractChoice == 4) {
-                        System.out.println("--- All Contracts ---");
-                        if (contracts.isEmpty()) {
-                            System.out.println("No contracts found.");
-                        } else {
-                            for (Contract c : contracts) {
-                                System.out.println(c);
+                            if (removed) {
+                                System.out.println("Contract deleted successfully.");
+                            } else {
+                                System.out.println("Contract not found.");
                             }
+                        } else if (contractChoice == 4) {
+                            System.out.println("--- All Contracts ---");
+                            if (contracts.isEmpty()) {
+                                System.out.println("No contracts found.");
+                            } else {
+                                for (Contract c : contracts) {
+                                    System.out.println(c);
+                                }
+                            }
+                        } else if (contractChoice == 5) {
+                            break;
+                        } else {
+                            System.out.println("Invalid choice.");
                         }
-                    } else {
-                        System.out.println("Invalid choice.");
                     }
                     break;
                 case 5: // Bill submenu
-                    System.out.println("--- All Bills ---");
-                    if (bills.isEmpty()) {
-                        System.out.println("No bills found.");
-                    } else {
-                        for (Bill b : bills) {
-                            System.out.println(b);
-                        }
-                    }
-                    // Option to create a bill
-                    System.out.print("Do you want to create a bill for a tenant? (y/n): ");
-                    String createBill = sc.nextLine();
-                    if (createBill.equalsIgnoreCase("y")) {
-                        System.out.print("Enter Tenant ID: ");
-                        String billTenantId = sc.nextLine();
-                        Contract foundContract = null;
-                        for (Contract c : contracts) {
-                            if (c.getTenant().getTenantId().equals(billTenantId)) {
-                                foundContract = c;
-                                break;
+                    while (true) {
+                        System.out.println("--- Bill Menu ---");
+                        System.out.println("1) View Bills");
+                        System.out.println("2) Create Bill");
+                        System.out.println("3) Back to Landlord Menu");
+                        System.out.print("Choose: ");
+                        int billChoice = sc.nextInt();
+                        sc.nextLine();
+                        if (billChoice == 1) {
+                            System.out.println("--- All Bills ---");
+                            if (bills.isEmpty()) {
+                                System.out.println("No bills found.");
+                                continue;
                             }
-                        }
-                        if (foundContract == null) {
-                            System.out.println("No contract found for this tenant.");
-                        } else {
+                            for (Bill b : bills) {
+                                System.out.println(b);
+                            }
+                        } else if (billChoice == 2) {
+                            System.out.print("Enter Tenant ID: ");
+                            String billTenantId = sc.nextLine();
+
+                            // Ensure tenant still exists before creating a bill.
+                            TenantAcc tenantAcc = null;
+                            for (Iuser user : system.getUsers()) {
+                                if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
+                                    if (((TenantAcc) user).getTenant().getTenantId().equals(billTenantId)) {
+                                        tenantAcc = (TenantAcc) user;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (tenantAcc == null) {
+                                System.out.println("Tenant not found.");
+                                continue;
+                            }
+
+                            Contract foundContract = null;
+                            for (Contract c : contracts) {
+                                if (c.getTenant().getTenantId().equals(billTenantId)) {
+                                    foundContract = c;
+                                    break;
+                                }
+                            }
+                            if (foundContract == null) {
+                                System.out.println("No contract found for this tenant.");
+                                continue;
+                            }
                             System.out.print("Enter water used (m3): ");
                             int waterUsed = sc.nextInt();
                             sc.nextLine();
@@ -408,6 +586,10 @@ public class MainBuilding {
                             bills.add(bill);
                             System.out.println("Bill created successfully!");
                             System.out.println(bill);
+                        } else if (billChoice == 3) {
+                            break;
+                        } else {
+                            System.out.println("Invalid choice.");
                         }
                     }
                     break;
@@ -522,14 +704,17 @@ public class MainBuilding {
                         System.out.print("Enter new email: ");
                         String newEmail = sc.nextLine();
                         tenant.setEmail(newEmail);
-                        // Create new contract
+                        // Replace all old contracts so edit does not behave like add.
+                        removeAllContractsForTenant(updateTenantId);
+
+                        // Create updated contract
                         System.out.print("Enter new contract start date (YYYY-MM-DD): ");
                         String newStartDate = sc.nextLine();
                         final double DEFAULT_WATER_RATE = 0.75;
                         final double DEFAULT_ELECTRICITY_RATE = 0.20;
                         Contract newContract = new Contract(tenant.getRoom(), tenant, newStartDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE);
                         contracts.add(newContract);
-                        System.out.println("Tenant updated and new contract created!");
+                        System.out.println("Tenant updated and contract replaced!");
                     }
                     break;
 
@@ -555,34 +740,69 @@ public class MainBuilding {
             System.out.println("4) Logout");
             System.out.println("5) Exit");
         }
+
+        private static Tenant getLoggedInTenant(RentalSystem system) {
+            Iuser loggedUser = system.getLoggedInUser();
+            if (loggedUser instanceof TenantAcc && ((TenantAcc) loggedUser).hasLinkedTenant()) {
+                return ((TenantAcc) loggedUser).getTenant();
+            }
+            return null;
+        }
+
+        private static Contract getLatestContractForTenant(String tenantId) {
+            if (tenantId == null) {
+                return null;
+            }
+            for (int i = contracts.size() - 1; i >= 0; i--) {
+                Contract c = contracts.get(i);
+                if (c != null && c.getTenant() != null && tenantId.equals(c.getTenant().getTenantId())) {
+                    return c;
+                }
+            }
+            return null;
+        }
+
+        private static void removeAllContractsForTenant(String tenantId) {
+            if (tenantId == null) {
+                return;
+            }
+            contracts.removeIf(c -> c != null
+                    && c.getTenant() != null
+                    && tenantId.equals(c.getTenant().getTenantId()));
+        }
+
         public static boolean handleTenantChoice(int choice, Building building, RentalSystem system, Scanner sc) {
             switch (choice) {
                 case 1:
                     // View My Room
-                    Iuser loggedUser = system.getLoggedInUser();
-                    if (loggedUser instanceof TenantAcc && ((TenantAcc) loggedUser).hasLinkedTenant()) {
-                        Tenant tenant = ((TenantAcc) loggedUser).getTenant();
+                    Tenant tenant = getLoggedInTenant(system);
+                    if (tenant != null) {
                         System.out.println("--- My Room ---");
-                        System.out.println(tenant.getRoom());
+                        Room room = tenant.getRoom();
+                        if (room == null) {
+                            System.out.println("No room information found.");
+                        } else {
+                            System.out.println("Room Number: " + room.getRoomId());
+                            System.out.println("Room Type: " + room.getRoomType());
+                            System.out.println("Floor: " + room.getFloor());
+                            System.out.println("Rent: $" + room.getRentPrice());
+                            System.out.println("Availability: " + (room.isAvailable() ? "Available" : "Not Available"));
+                            System.out.println("=======================================");
+                        }
                     } else {
                         System.out.println("No room information found.");
                     }
                     break;
                 case 2:
                     // View My Contract
-                    loggedUser = system.getLoggedInUser();
-                    if (loggedUser instanceof TenantAcc && ((TenantAcc) loggedUser).hasLinkedTenant()) {
-                        Tenant tenant = ((TenantAcc) loggedUser).getTenant();
+                    tenant = getLoggedInTenant(system);
+                    if (tenant != null) {
                         System.out.println("--- My Contract ---");
-                        boolean found = false;
-                        for (Contract c : contracts) {
-                            if (c.getTenant().getTenantId().equals(tenant.getTenantId())) {
-                                System.out.println(c);
-                                found = true;
-                            }
-                        }
-                        if (!found) {
+                        Contract myContract = getLatestContractForTenant(tenant.getTenantId());
+                        if (myContract == null) {
                             System.out.println("No contract found.");
+                        } else {
+                            System.out.println(myContract);
                         }
                     } else {
                         System.out.println("No contract information found.");
@@ -590,13 +810,13 @@ public class MainBuilding {
                     break;
                 case 3:
                     // View My Bills
-                    loggedUser = system.getLoggedInUser();
-                    if (loggedUser instanceof TenantAcc && ((TenantAcc) loggedUser).hasLinkedTenant()) {
-                        Tenant tenant = ((TenantAcc) loggedUser).getTenant();
+                    tenant = getLoggedInTenant(system);
+                    if (tenant != null) {
                         System.out.println("--- My Bills ---");
                         boolean found = false;
                         for (Bill b : bills) {
-                            if (b.getContract().getTenant().getTenantId().equals(tenant.getTenantId())) {
+                            if (b != null && b.getContract() != null && b.getContract().getTenant() != null
+                                    && tenant.getTenantId().equals(b.getContract().getTenant().getTenantId())) {
                                 System.out.println(b);
                                 found = true;
                             }

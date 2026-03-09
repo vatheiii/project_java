@@ -31,7 +31,8 @@ public boolean hasLinkedTenant() {
         if (action == null) 
             return false;
 
-        return action.equals(RentalSystem.View_Contract) ||
+        return action.equals(RentalSystem.View_Room) ||
+               action.equals(RentalSystem.View_Contract) ||
                action.equals(RentalSystem.View_Bill);
     }
     

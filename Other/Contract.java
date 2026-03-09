@@ -8,6 +8,7 @@ public class Contract {
     // Contract signing details
     private Room room;
     private Tenant tenant;
+    private Tenant tenantID;
     private String startDate;
 
     // water and electricity rates
@@ -17,6 +18,7 @@ public class Contract {
     public Contract(Room room, Tenant tenant, String startDate, double waterRate, double electricityRate) {
         this.room = room;
         this.tenant = tenant;
+        this.tenantID = tenant; 
         this.startDate = startDate;
 
         setWaterRate(waterRate);
@@ -45,6 +47,18 @@ public class Contract {
         return room;
     }
 
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setRoom(Room room) {
+        if (room == null) {
+            System.out.println("Room cannot be null.");
+            return;
+        }
+        this.room = room;
+    }
+
     private void setWaterRate(double waterRate) {
         if (waterRate <= 0) {
             System.out.println("Water rate cannot be negative nor zero. ");
@@ -64,6 +78,7 @@ public class Contract {
     @Override
     public String toString() {
         return "Tenant: " + (tenant != null ? tenant.getName() : "N/A") + "\n"
+                + "Tenant ID: " + (tenantID != null ? tenantID.getTenantId() : "N/A") + "\n"
                 + "Room: " + (room != null ? room.getRoomId() : "N/A") + "\n"
                 + "Start Date: " + startDate + "\n"
                 + "Water Rate: $" + waterRate + " Per m3\n"
