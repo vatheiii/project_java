@@ -5,6 +5,7 @@ public class UserBase implements Iuser {
     private String username;
     private String password;
     private boolean active;
+
 public UserBase(String id, String username, String password) {
         setId(id);
         setUsername(username);

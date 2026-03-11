@@ -19,10 +19,6 @@ public void setPhone(String phone) {
     }
 }
 
-@Override
-public String getRole(){
-    return "Manager";
-}
 
 @Override
 public boolean can(String action) {

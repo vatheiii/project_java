@@ -65,7 +65,7 @@ public class Room {
             "Room Type: " + roomType + ", " + "\n"+
             "Floor: " + floor + ", " + "\n"+
             "Rent: $" + rentPrice + ", " + "\n"+
-            "Available: " + (isAvailable()? "Available" : "Not Available") + "\n"+
+            "Availability: " + (isAvailable()? "Available" : "Not Available") + "\n"+
             "=======================================";
 
     }

@@ -22,11 +22,6 @@ public boolean hasLinkedTenant() {
 }
 
 @Override
-    public String getRole() {
-        return "Tenant";
-    }
-
-@Override
     public boolean can(String action) {
         if (action == null) 
             return false;

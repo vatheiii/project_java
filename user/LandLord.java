@@ -1,9 +1,9 @@
 package user;
+import controller.RentalSystem;
 public class LandLord extends UserBase {
      private String phone;
-     private String propertyName;
-        private String email;
-public LandLord(String Id, String Username, String Password) {
+    private String email;
+public LandLord(String Id, String Username, String Password, String phone, String email) {
         super(Id, Username, Password);
         setPhone(phone);
         setEmail(email);
@@ -26,7 +26,9 @@ public LandLord(UserBase u1, String phone, String email) {
             this.phone = phone;
         }
     }
-       public String getEmail() { return email; }
+    public String getEmail() { 
+        return email; 
+    }
     public void setEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
             this.email = "Unknown Email";
@@ -34,10 +36,7 @@ public LandLord(UserBase u1, String phone, String email) {
             this.email = email.trim();
         }
     }
-@Override 
-public String getRole() {
-    return "LandLord";
-}
+
 @Override
 public boolean can(String action) {
         return true;
