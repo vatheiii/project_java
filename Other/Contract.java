@@ -59,7 +59,7 @@ public class Contract {
         this.room = room;
     }
 
-    private void setWaterRate(double waterRate) {
+    public void setWaterRate(double waterRate) {
         if (waterRate <= 0) {
             System.out.println("Water rate cannot be negative nor zero. ");
             return;
@@ -67,7 +67,7 @@ public class Contract {
         this.waterRate = waterRate;
     }
 
-    private void setElectricityRate(double electricityRate) {
+    public void setElectricityRate(double electricityRate) {
         if (electricityRate <= 0) {
             System.out.println("Electricity rate cannot be negative nor zero. ");
             return;

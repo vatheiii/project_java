@@ -127,9 +127,20 @@ public class MainBuilding {
                             continue;
                         }
                         System.out.print("Enter Floor Number: ");
-                        int floor = sc.nextInt();
+                        if (!sc.hasNextInt()) {
+                            System.out.println("Invalid floor number. Room not added.");
+                            sc.nextLine();
+                            continue;
+                        }
+                        int enteredFloor = sc.nextInt();
+                        Room room = new Room(id, type, true, price, 1
+                        );
+                        if (!room.setFloor(enteredFloor)) {
+                            sc.nextLine();
+                            System.out.println("Room not added.");
+                            continue;
+                        }
                         sc.nextLine();
-                        Room room = new Room(id, type, true, price, floor);
                         building.addRoom(room);
                         System.out.println("Room added!");
 
@@ -137,9 +148,13 @@ public class MainBuilding {
                         building.showRooms();
 
                     } else if (roomChoice == 3) {
-                        System.out.print("Enter Room ID to edit: ");
+                        System.out.print("Enter Room ID to edit (0 to cancel): ");
                         int editId = sc.nextInt();
                         sc.nextLine();
+                        if (editId == 0) {
+                            System.out.println("Edit cancelled.");
+                            continue;
+                        }
                         Room roomToEdit = null;
                         for (Room r : building.getRooms()) {
                             if (r.getRoomId() == editId) {
@@ -151,9 +166,13 @@ public class MainBuilding {
                             System.out.println("Room not found.");
                             continue;
                         }
-                        System.out.print("Enter new Room ID: ");
+                        System.out.print("Enter new Room ID (0 to cancel): ");
                         int newRoomId = sc.nextInt();
                         sc.nextLine();
+                        if (newRoomId == 0) {
+                            System.out.println("Edit cancelled.");
+                            continue;
+                        }
 
                         boolean sameRoomNumber = newRoomId == roomToEdit.getRoomId();
                         if (sameRoomNumber) {
@@ -177,15 +196,29 @@ public class MainBuilding {
                         System.out.print("Set room as available? (y/n): ");
                         boolean available = sc.nextLine().equalsIgnoreCase("y");
                         System.out.print("Enter new Rent Price: ");
-                        double newPrice = sc.nextDouble();
+                        double enteredRentPrice = sc.nextDouble();
+                        roomToEdit.setRentPrice(enteredRentPrice);
                         sc.nextLine();
+                        if (Double.compare(roomToEdit.getRentPrice(), enteredRentPrice) != 0) {
+                            System.out.println("Invalid rent price. Update cancelled.");
+                            continue;
+                        }
                         System.out.print("Enter new Floor Number: ");
-                        int newFloor = sc.nextInt();
+                        if (!roomToEdit.setFloor(sc.nextInt())) {
+                            sc.nextLine();
+                            System.out.println("Invalid floor number. Update cancelled.");
+                            continue;
+                        }
                         sc.nextLine();
 
-                        building.getRooms().remove(roomToEdit);
-                        Room updatedRoom = new Room(newRoomId, roomToEdit.getRoomType(), available, newPrice, newFloor);
-                        building.addRoom(updatedRoom);
+                        roomToEdit.setAvailable(available);
+
+                        Room updatedRoom = roomToEdit;
+                        if (!sameRoomNumber) {
+                            building.getRooms().remove(roomToEdit);
+                            updatedRoom = new Room(newRoomId, roomToEdit.getRoomType(), roomToEdit.isAvailable(), roomToEdit.getRentPrice(), roomToEdit.getFloor());
+                            building.addRoom(updatedRoom);
+                        }
 
                         for (Iuser user : system.getUsers()) {
                             if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
@@ -223,25 +256,55 @@ public class MainBuilding {
                     sc.nextLine();
 
                     if (tenantChoice == 1) {
-                        System.out.print("Enter Tenant Name: ");
-                        String name = sc.nextLine();
-                        System.out.print("Enter Tenant Age: ");
-                        int age = sc.nextInt();
-                        sc.nextLine();
-                        if (age < 18 || age > 100) {
-                            System.out.println("Tenant must be between 18 and 100 years old. Tenant not added.");
-                            continue;
+                        Tenant draftTenant = new Tenant();
+                        String name;
+                        while (true) {
+                            System.out.print("Enter Tenant Name: ");
+                            name = sc.nextLine();
+                            if (draftTenant.setName(name)) break;
                         }
-                        System.out.print("Enter Tenant Phone Number (+855...): ");
-                        String phoneNumber = sc.nextLine();
-                        System.out.print("Enter Tenant E-Mail: ");
-                        String email = sc.nextLine();
+
+                        int age;
+                        while (true) {
+                            System.out.print("Enter Tenant Age: ");
+                            if (!sc.hasNextInt()) {
+                                System.out.println("Age must be a number.");
+                                sc.nextLine();
+                                continue;
+                            }
+                            age = sc.nextInt();
+                            sc.nextLine();
+                            if (draftTenant.setAge(age)) break;
+                        }
+
+                        String phoneNumber;
+                        while (true) {
+                            System.out.print("Enter Tenant Phone Number (+855...): ");
+                            phoneNumber = sc.nextLine();
+                            if (draftTenant.setPhoneNumber(phoneNumber)) break;
+                        }
+
+                        String email;
+                        while (true) {
+                            System.out.print("Enter Tenant E-Mail: ");
+                            email = sc.nextLine();
+                            if (draftTenant.setEmail(email)) break;
+                        }
 
                         Room assignedRoom = null;
                         while (true) {
-                            System.out.print("Enter Room ID: ");
+                            System.out.print("Enter Room ID (0 to cancel): ");
+                            if (!sc.hasNextInt()) {
+                                System.out.println("Room ID must be a number.");
+                                sc.nextLine();
+                                continue;
+                            }
                             int roomId = sc.nextInt();
                             sc.nextLine();
+                            if (roomId == 0) {
+                                System.out.println("Tenant creation cancelled.");
+                                break;
+                            }
                             for (Room r : building.getRooms()) {
                                 if (r.getRoomId() == roomId) {
                                     assignedRoom = r;
@@ -255,7 +318,9 @@ public class MainBuilding {
                             boolean roomTaken = false;
                             for (Iuser user : system.getUsers()) {
                                 if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
-                                    if (((TenantAcc) user).getTenant().getRoom().getRoomId() == assignedRoom.getRoomId()) {
+                                    Tenant existingTenant = ((TenantAcc) user).getTenant();
+                                    if (existingTenant != null && existingTenant.getRoom() != null
+                                            && existingTenant.getRoom().getRoomId() == assignedRoom.getRoomId()) {
                                         roomTaken = true;
                                         break;
                                     }
@@ -269,6 +334,7 @@ public class MainBuilding {
                             break;
                         }
                         if (assignedRoom == null) continue;
+                        draftTenant.setRoom(assignedRoom);
 
                         System.out.print("Enter Tenant ID: ");
                         String tenantId = sc.nextLine();
@@ -285,25 +351,35 @@ public class MainBuilding {
                         System.out.println("Tenant and contract added successfully!");
 
                     } else if (tenantChoice == 2) {
-                        System.out.print("Enter Tenant ID to edit: ");
+                        System.out.print("Enter Tenant ID to edit (0 to cancel): ");
                         String editTenantId = sc.nextLine();
-                        TenantAcc tenantAcc = null;
+                        if ("0".equals(editTenantId)) {
+                            System.out.println("Edit cancelled.");
+                            continue;
+                        }
+                        TenantAcc tenantAccEdit = null;
                         for (Iuser user : system.getUsers()) {
                             if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
                                 if (((TenantAcc) user).getTenant().getTenantId().equals(editTenantId)) {
-                                    tenantAcc = (TenantAcc) user;
+                                    tenantAccEdit = (TenantAcc) user;
                                     break;
                                 }
                             }
                         }
-                        if (tenantAcc == null) {
+                        if (tenantAccEdit == null) {
                             System.out.println("Tenant not found.");
                         } else {
-                            Tenant tenant = tenantAcc.getTenant();
-                            System.out.print("Enter new phone number (+855...): ");
-                            tenant.setPhoneNumber(sc.nextLine());
-                            System.out.print("Enter new email: ");
-                            tenant.setEmail(sc.nextLine());
+                            Tenant tenant = tenantAccEdit.getTenant();
+                            while (true) {
+                                System.out.print("Enter new phone number (+855...): ");
+                                String newPhone = sc.nextLine();
+                                if (tenant.setPhoneNumber(newPhone)) break;
+                            }
+                            while (true) {
+                                System.out.print("Enter new email: ");
+                                String newEmail = sc.nextLine();
+                                if (tenant.setEmail(newEmail)) break;
+                            }
                             removeAllContractsForTenant(editTenantId);
                             System.out.print("Enter new contract start date (YYYY-MM-DD): ");
                             String newStartDate = sc.nextLine();
@@ -408,56 +484,162 @@ public class MainBuilding {
                     sc.nextLine();
 
                     if (contractChoice == 1) {
-                        System.out.print("Enter Tenant ID: ");
-                        String tenantId = sc.nextLine();
-                        TenantAcc tenantAcc = findTenantAcc(system, tenantId);
-                        if (tenantAcc == null) {
-                            System.out.println("Tenant not found.");
-                        } else {
-                            Tenant tenant = tenantAcc.getTenant();
-                            removeAllContractsForTenant(tenantId);
-                            System.out.print("Enter Contract Start Date (YYYY-MM-DD): ");
-                            String startDate = sc.nextLine();
-                            contracts.add(new Contract(tenant.getRoom(), tenant, startDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE));
-                            System.out.println("Contract replaced successfully!");
-                        }
-
-                    } else if (contractChoice == 2) {
-                        System.out.print("Enter Contract Tenant ID to edit: ");
-                        String editId = sc.nextLine();
-                        TenantAcc tenantAcc = findTenantAcc(system, editId);
-                        if (tenantAcc == null) {
-                            System.out.println("Tenant not found.");
-                            continue;
-                        }
-                        Contract contractToEdit = null;
-                        for (Contract c : contracts) {
-                            if (c.getTenant().getTenantId().equals(editId)) {
-                                contractToEdit = c;
+                        TenantAcc tenantAcc = null;
+                        String tenantId;
+                        while (true) {
+                            System.out.print("Enter Tenant ID (0 to cancel): ");
+                            tenantId = sc.nextLine();
+                            if ("0".equals(tenantId)) {
+                                System.out.println("Add contract cancelled.");
                                 break;
                             }
+                            tenantAcc = findTenantAcc(system, tenantId);
+                            if (tenantAcc != null) break;
+                            System.out.println("Tenant not found.");
                         }
-                        if (contractToEdit == null) {
-                            System.out.println("Contract not found for this tenant.");
-                        } else {
-                            System.out.print("Enter new Start Date (YYYY-MM-DD): ");
-                            String newStartDate = sc.nextLine();
-                            System.out.print("Enter new Water Rate: ");
-                            double newWaterRate = sc.nextDouble();
-                            sc.nextLine();
-                            System.out.print("Enter new Electricity Rate: ");
-                            double newElectricityRate = sc.nextDouble();
-                            sc.nextLine();
-                            removeAllContractsForTenant(editId);
-                            contracts.add(new Contract(contractToEdit.getRoom(), contractToEdit.getTenant(), newStartDate, newWaterRate, newElectricityRate));
-                            System.out.println("Contract updated!");
+                        if (tenantAcc == null) {
+                            continue;
                         }
 
+                        Tenant tenant = tenantAcc.getTenant();
+                        removeAllContractsForTenant(tenantId);
+
+                        String startDate;
+                        while (true) {
+                            System.out.print("Enter Contract Start Date (YYYY-MM-DD, 0 to cancel): ");
+                            startDate = sc.nextLine();
+                            if ("0".equals(startDate)) {
+                                System.out.println("Add contract cancelled.");
+                                break;
+                            }
+                            if (startDate.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
+                                break;
+                            }
+                            System.out.println("Invalid date format. Please use YYYY-MM-DD.");
+                        }
+                        if ("0".equals(startDate)) {
+                            continue;
+                        }
+
+                        contracts.add(new Contract(tenant.getRoom(), tenant, startDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE));
+                        System.out.println("Contract replaced successfully!");
+
+                    } else if (contractChoice == 2) {
+                        String editId;
+                        Contract contractToEdit = null;
+                        while (true) {
+                            System.out.print("Enter Contract Tenant ID to edit (0 to cancel): ");
+                            editId = sc.nextLine();
+                            if ("0".equals(editId)) {
+                                System.out.println("Edit contract cancelled.");
+                                break;
+                            }
+                            TenantAcc tenantAcc = findTenantAcc(system, editId);
+                            if (tenantAcc == null) {
+                                System.out.println("Tenant not found.");
+                                continue;
+                            }
+                            for (Contract c : contracts) {
+                                if (c.getTenant().getTenantId().equals(editId)) {
+                                    contractToEdit = c;
+                                    break;
+                                }
+                            }
+                            if (contractToEdit != null) break;
+                            System.out.println("Contract not found for this tenant.");
+                        }
+                        if (contractToEdit == null) {
+                            continue;
+                        }
+
+                        String newStartDate;
+                        while (true) {
+                            System.out.print("Enter new Start Date (YYYY-MM-DD, 0 to cancel): ");
+                            newStartDate = sc.nextLine();
+                            if ("0".equals(newStartDate)) {
+                                System.out.println("Edit contract cancelled.");
+                                break;
+                            }
+                            if (newStartDate.matches("^\\d{4}-\\d{2}-\\d{2}$")) break;
+                            System.out.println("Invalid date format. Please use YYYY-MM-DD.");
+                        }
+                        if ("0".equals(newStartDate)) {
+                            continue;
+                        }
+
+                        double newWaterRate;
+                        while (true) {
+                            System.out.print("Enter new Water Rate (>0, 0 to cancel): ");
+                            String input = sc.nextLine();
+                            if ("0".equals(input)) {
+                                System.out.println("Edit contract cancelled.");
+                                newWaterRate = -1;
+                                break;
+                            }
+                            try {
+                                newWaterRate = Double.parseDouble(input);
+                            } catch (NumberFormatException ex) {
+                                System.out.println("Water rate must be a number.");
+                                continue;
+                            }
+                            if (newWaterRate > 0) break;
+                            System.out.println("Water rate must be greater than 0.");
+                        }
+                        if (newWaterRate <= 0) {
+                            continue;
+                        }
+
+                        double newElectricityRate;
+                        while (true) {
+                            System.out.print("Enter new Electricity Rate (>0, 0 to cancel): ");
+                            String input = sc.nextLine();
+                            if ("0".equals(input)) {
+                                System.out.println("Edit contract cancelled.");
+                                newElectricityRate = -1;
+                                break;
+                            }
+                            try {
+                                newElectricityRate = Double.parseDouble(input);
+                            } catch (NumberFormatException ex) {
+                                System.out.println("Electricity rate must be a number.");
+                                continue;
+                            }
+                            if (newElectricityRate > 0) break;
+                            System.out.println("Electricity rate must be greater than 0.");
+                        }
+                        if (newElectricityRate <= 0) {
+                            continue;
+                        }
+
+                        removeAllContractsForTenant(editId);
+                        contracts.add(new Contract(contractToEdit.getRoom(), contractToEdit.getTenant(), newStartDate, newWaterRate, newElectricityRate));
+                        System.out.println("Contract updated!");
+
                     } else if (contractChoice == 3) {
-                        System.out.print("Enter Contract Tenant ID to delete: ");
-                        String delId = sc.nextLine();
-                        boolean removed = contracts.removeIf(c -> c.getTenant().getTenantId().equals(delId));
-                        System.out.println(removed ? "Contract deleted successfully." : "Contract not found.");
+                        String delId;
+                        while (true) {
+                            System.out.print("Enter Contract Tenant ID to delete (0 to cancel): ");
+                            delId = sc.nextLine();
+                            if ("0".equals(delId)) {
+                                System.out.println("Delete contract cancelled.");
+                                break;
+                            }
+                            boolean exists = false;
+                            for (Contract c : contracts) {
+                                if (c.getTenant() != null && delId.equals(c.getTenant().getTenantId())) {
+                                    exists = true;
+                                    break;
+                                }
+                            }
+                            if (!exists) {
+                                System.out.println("Contract not found.");
+                                continue;
+                            }
+                            final String targetDelId = delId;
+                            boolean removed = contracts.removeIf(c -> c.getTenant() != null && targetDelId.equals(c.getTenant().getTenantId()));
+                            System.out.println(removed ? "Contract deleted successfully." : "Contract not found.");
+                            break;
+                        }
 
                     } else if (contractChoice == 4) {
                         System.out.println("--- All Contracts ---");
@@ -496,8 +678,8 @@ public class MainBuilding {
                     } else if (billChoice == 2) {
                         System.out.print("Enter Tenant ID: ");
                         String billTenantId = sc.nextLine();
-                        TenantAcc tenantAcc = findTenantAcc(system, billTenantId);
-                        if (tenantAcc == null) {
+                        TenantAcc tenantAccEdit = findTenantAcc(system, billTenantId);
+                        if (tenantAccEdit == null) {
                             System.out.println("Tenant not found.");
                             continue;
                         }
@@ -614,8 +796,12 @@ public class MainBuilding {
                 if (!foundTenant) System.out.println("No tenants found.");
                 break;
             case 6:
-                System.out.print("Enter Tenant ID to update: ");
+                System.out.print("Enter Tenant ID to update (0 to cancel): ");
                 String updateTenantId = sc.nextLine();
+                if ("0".equals(updateTenantId)) {
+                    System.out.println("Update cancelled.");
+                    break;
+                }
                 TenantAcc tenantAcc = findTenantAcc(system, updateTenantId);
                 if (tenantAcc == null) {
                     System.out.println("Tenant not found.");

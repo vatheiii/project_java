@@ -37,11 +37,13 @@ public class Room {
         return floor;
     }   
 
-    public void setFloor(int floor) {
-        if (floor > 0) {
+    public boolean setFloor(int floor) {
+        if (floor > 0 && floor < 5) {
             this.floor = floor;
+            return true;
         } else {
-            System.out.println("Floor number must be above ground floor.");
+            System.out.println("Floor number must be between 1 and 4.");
+            return false;
         }
     }
 
