@@ -1,6 +1,6 @@
 package user;
 
-public class UserBase implements Iuser {
+public abstract class UserBase implements Iuser {
     private String id;
     private String username;
     private String password;
@@ -57,9 +57,7 @@ public boolean checkPassword(String input) {
         return password != null && password.equals(input);
     }
 @Override
-    public boolean can(String action) {
-        return false;
-    }
+    public abstract boolean can(String action);
 @Override
     public String getRole() {
         return "User";

@@ -1,5 +1,6 @@
 package Other;
 import java.util.ArrayList;
+import java.time.LocalDate;
 
 public class Contract {
     // global list of contracts for simple storage
@@ -9,13 +10,13 @@ public class Contract {
     private Room room;
     private Tenant tenant;
     private Tenant tenantID;
-    private String startDate;
+    private LocalDate startDate;
 
     // water and electricity rates
     private double waterRate;
     private double electricityRate;
 
-    public Contract(Room room, Tenant tenant, String startDate, double waterRate, double electricityRate) {
+    public Contract(Room room, Tenant tenant, LocalDate startDate, double waterRate, double electricityRate) {
         this.room = room;
         this.tenant = tenant;
         this.tenantID = tenant; 
@@ -47,7 +48,7 @@ public class Contract {
         return room;
     }
 
-    public String getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 

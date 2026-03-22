@@ -6,6 +6,7 @@ import user.LandLord;
 import user.Manager;
 import user.TenantAcc;
 import user.UserBase;
+import user.UserFilter;
 import user.Iuser;
 
 public class RentalSystem {
@@ -147,4 +148,31 @@ public class RentalSystem {
             }
         }
     }
+   
+    public void showActiveUsers(){
+    System.out.println("Active Users:");
+    UserFilter activeFilter = new UserFilter() {
+        @Override
+        public boolean match(Iuser user) {
+            if (user instanceof UserBase) {
+                return ((UserBase) user).isActive();
+            }
+            return false;
+        }
+    };
+    for (Iuser user : users) {
+        if (activeFilter.match(user)) {
+            System.out.println("- " + user.getUserName() + " (" + resolveRole(user) + ")");
+        }
+    }
+    }
+public void showActiveUsersWithLambda(){
+    System.out.println("Active Users (using lambda):");
+    UserFilter activeFilter = user -> (user instanceof UserBase) && ((UserBase) user).isActive();
+    for (Iuser user : users) {
+        if (activeFilter.match(user)) {
+            System.out.println("- " + user.getUserName() + " (" + resolveRole(user) + ")");
+        }
+    }
+}
 }
