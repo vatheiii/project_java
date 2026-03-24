@@ -1,5 +1,4 @@
 package user;
-import controller.RentalSystem;
 public class LandLord extends UserBase {
      private String phone;
     private String email;
