@@ -6,7 +6,7 @@ public class Tenant {
     private String email;
     private Room room;
     private String TenantId;
-    private String password;
+        private String password;
 
 public Tenant() {
 }
@@ -34,6 +34,10 @@ public Room getRoom() {
 
 public String getTenantId() {
         return TenantId;
+}
+
+public String getPassword() {
+        return password;
 }
 
 public boolean setPhoneNumber(String phoneNumber) {
