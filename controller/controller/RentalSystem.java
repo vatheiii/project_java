@@ -50,13 +50,20 @@ public class RentalSystem {
             return false;
         }// Loop through users to find a match
 
+        String normalizedUsername = username.trim();
+        String normalizedPassword = password.trim();
+        if (normalizedUsername.isEmpty() || normalizedPassword.isEmpty()) {
+            System.out.println("Invalid username or password!");
+            return false;
+        }
+
         for (Iuser user : users) {
-            if (!user.getUserName().equals(username)) continue;
+            if (!user.getUserName().equals(normalizedUsername)) continue;
             boolean authenticated;
             if (user instanceof UserBase) {
-                authenticated = ((UserBase) user).checkPassword(password);
+                authenticated = ((UserBase) user).checkPassword(normalizedPassword);
             } else {
-                authenticated = user.getPassword().equals(password);
+                authenticated = user.getPassword().equals(normalizedPassword);
             }
             
             if (authenticated) { 
