@@ -18,12 +18,30 @@ public LandLord(UserBase u1, String phone, String email) {
     }
 
     public void setPhone(String phone) {
-        if(phone == null || phone.length() < 8) {
+        if (phone == null || phone.trim().isEmpty()) {
             System.out.println("Invalid phone number");
             this.phone = "00000000";
-        } else {
-            this.phone = phone;
+            return;
         }
+        
+        phone = phone.trim();
+        String normalizedPhone = null;
+        
+        // Case 1: Local Cambodian format (0 + 8-9 digits)
+        if (phone.startsWith("0") && phone.matches("^0[0-9]{8,9}$")) {
+            normalizedPhone = "+855" + phone.substring(1);
+        }
+        // Case 2: International format (+country code + 8+ digits)
+        else if (phone.startsWith("+") && phone.matches("^\\+[0-9]{1,3}[0-9]{8,}$")) {
+            normalizedPhone = phone;
+        }
+        // Invalid format
+        else {
+            System.out.println("Invalid phone number format.");
+            return;
+        }
+        
+        this.phone = normalizedPhone;
     }
     public String getEmail() { 
         return email; 

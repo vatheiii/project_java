@@ -18,6 +18,32 @@ public class MainBuilding {
     private static java.util.ArrayList<Bill> bills = new java.util.ArrayList<>();
     private static final LocalDate MIN_CONTRACT_DATE = LocalDate.of(2026, 1, 1);
 
+    // Prompt user to select rental term
+    private static int promptForRentalTerm(Scanner sc) {
+        while (true) {
+            System.out.println("--- Select Rental Term ---");
+            System.out.println("1) Short-term (3 months)");
+            System.out.println("2) Mid-term (6 months)");
+            System.out.println("3) Annual (12 months)");
+            System.out.print("Choose: ");
+            Integer choice = ExceptionRentalSystem.readMenuIntOrNull(sc, "Invalid input. Please enter a whole number.");
+            if (choice == null) {
+                continue;
+            }
+            sc.nextLine(); // consume newline
+            switch (choice) {
+                case 1:
+                    return 3;
+                case 2:
+                    return 6;
+                case 3:
+                    return 12;
+                default:
+                    System.out.println("Invalid choice. Please select 1, 2, or 3.");
+            }
+        }
+    }
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         RentalSystem system = new RentalSystem();
@@ -396,7 +422,7 @@ public class MainBuilding {
 
                         String phoneNumber;
                         while (true) {
-                            System.out.print("Enter Tenant Phone Number (+855...): ");
+                            System.out.print("Enter Tenant Phone Number: ");
                             phoneNumber = sc.nextLine();
                             if (draftTenant.setPhoneNumber(phoneNumber)) break;
                         }
@@ -407,6 +433,8 @@ public class MainBuilding {
                             email = sc.nextLine();
                             if (draftTenant.setEmail(email)) break;
                         }
+
+                        showAvailableRoomsForTenantCreation(building, system);
 
                         Room assignedRoom = null;
                         while (true) {
@@ -432,18 +460,12 @@ public class MainBuilding {
                                 System.out.println("Room not found. Please enter a valid room ID.");
                                 continue;
                             }
-                            boolean roomTaken = false;
-                            for (Iuser user : system.getUsers()) {
-                                if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
-                                    Tenant existingTenant = ((TenantAcc) user).getTenant();
-                                    if (existingTenant != null && existingTenant.getRoom() != null
-                                            && existingTenant.getRoom().getRoomId() == assignedRoom.getRoomId()) {
-                                        roomTaken = true;
-                                        break;
-                                    }
-                                }
+                            if (!assignedRoom.isAvailable()) {
+                                System.out.println("Room is marked as not available. Please choose a different room.");
+                                assignedRoom = null;
+                                continue;
                             }
-                            if (roomTaken) {
+                            if (isRoomAssignedToTenant(system, assignedRoom.getRoomId())) {
                                 System.out.println("Room is already occupied. Please choose a different room.");
                                 assignedRoom = null;
                                 continue;
@@ -474,16 +496,8 @@ public class MainBuilding {
                         Tenant tenant = new Tenant(name, phoneNumber, email, assignedRoom, tenantId, age, tenantPassword);
                         TenantAcc tenantAcc = new TenantAcc(tenant, name, tenantPassword);
                         system.addUser(tenantAcc);
-
-                        String startDate;
-                        while (true) {
-                            System.out.print("Enter Contract Start Date (YYYY-MM-DD): ");
-                            startDate = sc.nextLine().trim();
-                            if (isValidContractDate(startDate)) break;
-                        }
-                        Contract contract = new Contract(assignedRoom, tenant, startDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE);
-                        contracts.add(contract);
-                        System.out.println("Tenant and contract added successfully!");
+                        assignedRoom.setAvailable(false);
+                        System.out.println("Tenant added successfully! Create a contract in the Contract menu.");
 
                     } else if (tenantChoice == 2) {
                         String editTenantId;
@@ -532,15 +546,7 @@ public class MainBuilding {
                                 String newEmail = sc.nextLine();
                                 if (tenant.setEmail(newEmail)) break;
                             }
-                            removeAllContractsForTenant(editTenantId);
-                            String newStartDate;
-                            while (true) {
-                                System.out.print("Enter new contract start date (YYYY-MM-DD): ");
-                                newStartDate = sc.nextLine().trim();
-                                if (isValidContractDate(newStartDate)) break;
-                            }
-                            contracts.add(new Contract(tenant.getRoom(), tenant, newStartDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE));
-                            System.out.println("Tenant updated and contract replaced!");
+                            System.out.println("Tenant updated! Manage contracts in the Contract menu.");
                         }
 
                     } else if (tenantChoice == 3) {
@@ -636,12 +642,12 @@ public class MainBuilding {
                         }
                         String managerPhone;
                         while (true) {
-                            System.out.print("Enter Manager Phone (+855...): ");
+                            System.out.print("Enter Manager Phone: ");
                             managerPhone = sc.nextLine().trim();
-                            if (managerPhone.matches("^\\+855[0-9]{8,9}$")) {
+                            Manager tempManager = new Manager(managerId, managerUsername, managerPassword, managerPhone);
+                            if (!"00000000".equals(tempManager.getPhone())) {
                                 break;
                             }
-                            System.out.println("Invalid phone number format. Please use +855 followed by 8 or 9 digits.");
                         }
                         system.addUser(new Manager(managerId, managerUsername, managerPassword, managerPhone));
                         System.out.println("Manager added successfully!");
@@ -734,7 +740,10 @@ public class MainBuilding {
                             continue;
                         }
 
-                        contracts.add(new Contract(tenant.getRoom(), tenant, startDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE));
+                        int rentalTermMonths = promptForRentalTerm(sc);
+                        LocalDate parsedStartDate = LocalDate.parse(startDate);
+                        LocalDate contractEndDate = parsedStartDate.plusMonths(rentalTermMonths).minusDays(1);
+                        contracts.add(new Contract(tenant.getRoom(), tenant, parsedStartDate, contractEndDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE));
                         System.out.println("Contract replaced successfully!");
 
                     } else if (contractChoice == 2) {
@@ -824,7 +833,10 @@ public class MainBuilding {
                         }
 
                         removeAllContractsForTenant(editId);
-                        contracts.add(new Contract(contractToEdit.getRoom(), contractToEdit.getTenant(), newStartDate, newWaterRate, newElectricityRate));
+                        int rentalTermMonths = promptForRentalTerm(sc);
+                        LocalDate parsedEditStartDate = LocalDate.parse(newStartDate);
+                        LocalDate editEndDate = parsedEditStartDate.plusMonths(rentalTermMonths).minusDays(1);
+                        contracts.add(new Contract(contractToEdit.getRoom(), contractToEdit.getTenant(), parsedEditStartDate, editEndDate, newWaterRate, newElectricityRate));
                         System.out.println("Contract updated!");
 
                     } else if (contractChoice == 3) {
@@ -836,17 +848,43 @@ public class MainBuilding {
                                 System.out.println("Delete contract cancelled.");
                                 break;
                             }
-                            boolean exists = false;
+                            Contract contractToDelete = null;
                             for (Contract c : contracts) {
                                 if (c.getTenant() != null && delId.equals(c.getTenant().getTenantId())) {
-                                    exists = true;
+                                    contractToDelete = c;
                                     break;
                                 }
                             }
-                            if (!exists) {
+                            if (contractToDelete == null) {
                                 System.out.println("Contract not found.");
                                 continue;
                             }
+
+                            LocalDate today = LocalDate.now();
+                            if (contractToDelete.getEndDate() != null && !today.isAfter(contractToDelete.getEndDate())) {
+                                System.out.println("Cannot delete contract. This contract is still active until " + contractToDelete.getEndDate() + ".");
+                                break;
+                            }
+
+                            System.out.println("WARNING: This contract has ended. Deleting it will permanently remove the record.");
+                            boolean confirmedDelete = false;
+                            while (true) {
+                                System.out.print("Confirm delete? (yes/no): ");
+                                String confirmDelete = sc.nextLine().trim();
+                                if ("yes".equalsIgnoreCase(confirmDelete) || "y".equalsIgnoreCase(confirmDelete)) {
+                                    confirmedDelete = true;
+                                    break;
+                                }
+                                if ("no".equalsIgnoreCase(confirmDelete) || "n".equalsIgnoreCase(confirmDelete)) {
+                                    break;
+                                }
+                                System.out.println("Invalid input. Please enter yes or no.");
+                            }
+                            if (!confirmedDelete) {
+                                System.out.println("Delete contract cancelled.");
+                                break;
+                            }
+
                             final String targetDelId = delId;
                             boolean removed = contracts.removeIf(c -> c.getTenant() != null && targetDelId.equals(c.getTenant().getTenantId()));
                             System.out.println(removed ? "Contract deleted successfully." : "Contract not found.");
@@ -995,9 +1033,6 @@ public class MainBuilding {
     }
 
     public static boolean handleManagerChoice(int choice, Building building, RentalSystem system, Scanner sc) {
-        final double DEFAULT_WATER_RATE = 0.75;
-        final double DEFAULT_ELECTRICITY_RATE = 0.20;
-
         switch (choice) {
             case 1:
                 building.showRooms();
@@ -1114,15 +1149,7 @@ public class MainBuilding {
                             break;
                         }
                     }
-                    removeAllContractsForTenant(updateTenantId);
-                    String newStartDate;
-                    while (true) {
-                        System.out.print("Enter new contract start date (YYYY-MM-DD): ");
-                        newStartDate = sc.nextLine().trim();
-                        if (isValidContractDate(newStartDate)) break;
-                    }
-                    contracts.add(new Contract(tenant.getRoom(), tenant, newStartDate, DEFAULT_WATER_RATE, DEFAULT_ELECTRICITY_RATE));
-                    System.out.println("Tenant updated and contract replaced!");
+                    System.out.println("Tenant updated! Manage contracts in the Contract menu.");
                 }
                 break;
             case 7:
@@ -1223,6 +1250,37 @@ public class MainBuilding {
             }
         }
         return null;
+    }
+
+    private static boolean isRoomAssignedToTenant(RentalSystem system, int roomId) {
+        for (Iuser user : system.getUsers()) {
+            if (user instanceof TenantAcc && ((TenantAcc) user).hasLinkedTenant()) {
+                Tenant existingTenant = ((TenantAcc) user).getTenant();
+                if (existingTenant != null && existingTenant.getRoom() != null
+                        && existingTenant.getRoom().getRoomId() == roomId) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static void showAvailableRoomsForTenantCreation(Building building, RentalSystem system) {
+        System.out.println("--- Available Rooms ---");
+        boolean foundAvailableRoom = false;
+        for (Room room : building.getRooms()) {
+            boolean availableNow = room.isAvailable() && !isRoomAssignedToTenant(system, room.getRoomId());
+            if (availableNow) {
+                foundAvailableRoom = true;
+                System.out.println("Room ID: " + room.getRoomId()
+                        + " | Type: " + room.getRoomType()
+                        + " | Availability: Available");
+            }
+        }
+        if (!foundAvailableRoom) {
+            System.out.println("No available rooms right now.");
+        }
+        System.out.println("======================");
     }
 
     private static Contract getLatestContractForTenant(String tenantId) {

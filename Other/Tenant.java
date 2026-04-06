@@ -41,17 +41,31 @@ public String getPassword() {
 }
 
 public boolean setPhoneNumber(String phoneNumber) {
-        String phoneRegex = "^\\+855[0-9]{8,9}$";
-        if (phoneNumber != null && phoneNumber.matches(phoneRegex)) {
-                this.phoneNumber = phoneNumber;
-                return true;
-        } else if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
                 System.out.println("Phone number cannot be empty.");
                 return false;
-        } else {
+        }
+        
+        phoneNumber = phoneNumber.trim();
+        String normalizedPhone = null;
+        
+        // Case 1: Local Cambodian format (0 + 8-9 digits)
+        if (phoneNumber.startsWith("0") && phoneNumber.matches("^0[0-9]{8,9}$")) {
+                // Convert 0XXXXXXXXX or 0XXXXXXXXXX to +855XXXXXXXXX or +855XXXXXXXXXX
+                normalizedPhone = "+855" + phoneNumber.substring(1);
+        }
+        // Case 2: International format (+country code + 8+ digits)
+        else if (phoneNumber.startsWith("+") && phoneNumber.matches("^\\+[0-9]{1,3}[0-9]{8,}$")) {
+                normalizedPhone = phoneNumber;
+        }
+        // Invalid format
+        else {
                 System.out.println("Invalid phone number format.");
                 return false;
         }
+        
+        this.phoneNumber = normalizedPhone;
+        return true;
 }
 public boolean setEmail(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";

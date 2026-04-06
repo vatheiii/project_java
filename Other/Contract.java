@@ -11,16 +11,18 @@ public class Contract {
     private Tenant tenant;
     private Tenant tenantID;
     private LocalDate startDate;
+    private LocalDate endDate;
 
     // water and electricity rates
     private double waterRate;
     private double electricityRate;
 
-    public Contract(Room room, Tenant tenant, LocalDate startDate, double waterRate, double electricityRate) {
+    public Contract(Room room, Tenant tenant, LocalDate startDate, LocalDate endDate, double waterRate, double electricityRate) {
         this.room = room;
         this.tenant = tenant;
         this.tenantID = tenant; 
         this.startDate = startDate;
+        this.endDate = endDate;
 
         setWaterRate(waterRate);
         setElectricityRate(electricityRate);
@@ -50,6 +52,10 @@ public class Contract {
 
     public LocalDate getStartDate() {
         return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
     public void setRoom(Room room) {
@@ -82,6 +88,7 @@ public class Contract {
                 + "Tenant ID: " + (tenantID != null ? tenantID.getTenantId() : "N/A") + "\n"
                 + "Room: " + (room != null ? room.getRoomId() : "N/A") + "\n"
                 + "Start Date: " + startDate + "\n"
+                + "End Date: " + endDate + "\n"
                 + "Water Rate: $" + waterRate + " Per m3\n"
                 + "Electricity Rate: $" + electricityRate + " Per kWh\n"
                 + "======================================";
